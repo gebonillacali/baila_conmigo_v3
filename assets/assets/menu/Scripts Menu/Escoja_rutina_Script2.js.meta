@@ -1,0 +1,30 @@
+fileFormatVersion: 2
+guid: 40ab113d3958ddf44b35050244c74caf
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences:
+  - textura1: {instanceID: 0}
+  - icon: {fileID: 2800000, guid: dd553273449e7458aa944b0a31439cf8, type: 3}
+  - icon2: {fileID: 2800000, guid: 5ab3a6f5cd1594f9e8312765563d3b08, type: 3}
+  - icon3: {fileID: 2800000, guid: af2c0083a010642729ce7da7dbf0f7bf, type: 3}
+  - icon4: {fileID: 2800000, guid: d25f6de38bf3b44cdac63b396cc344eb, type: 3}
+  - icon5: {instanceID: 0}
+  - icon6: {instanceID: 0}
+  - icon7: {instanceID: 0}
+  - icon8: {instanceID: 0}
+  - icon9: {instanceID: 0}
+  - icon10: {instanceID: 0}
+  - icon11: {instanceID: 0}
+  - icon12: {instanceID: 0}
+  - icon13: {instanceID: 0}
+  - icon14: {instanceID: 0}
+  - icon15: {instanceID: 0}
+  - icon16: {instanceID: 0}
+  - icon17: {instanceID: 0}
+  - icon18: {instanceID: 0}
+  - icon19: {instanceID: 0}
+  - icon20: {instanceID: 0}
+  - icon21: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 

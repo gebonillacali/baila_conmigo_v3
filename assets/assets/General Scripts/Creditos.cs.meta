@@ -1,0 +1,10 @@
+fileFormatVersion: 2
+guid: a0b7694fd054ad24696501adda6ab594
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences:
+  - vgUBosque: {fileID: 2800000, guid: b32633ef587be7c4ab516350bc9ec719, type: 3}
+  - vgCorpSindrome: {fileID: 2800000, guid: b95e2720eb9c43247810fe4f5a71c365, type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 

@@ -1,0 +1,35 @@
+fileFormatVersion: 2
+guid: dce779d0f9d044b40847e2ad536ef8a8
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences:
+  - instruccionMoverCabezaIzquierda: {fileID: 2800000, guid: 74ec7afd25d3841e2be247da3d00ba7d,
+      type: 3}
+  - instruccionMoverCabezaDerecha: {instanceID: 0}
+  - instruccionMoverEstirarBrazos: {instanceID: 0}
+  - instruccionMoverAduccionBrazos: {instanceID: 0}
+  - instruccionMoverAbduccionBrazos: {instanceID: 0}
+  - instruccionMoverAduccionPiernas: {instanceID: 0}
+  - instruccionMoverAbduccionPiernas: {instanceID: 0}
+  - instruccionMoverBrazosAbiertos: {instanceID: 0}
+  - instruccionMoverBrazosAbiertosArriba: {instanceID: 0}
+  - instruccionMoverBrazosArriba: {instanceID: 0}
+  - instruccionMoverCabezaAbajo: {instanceID: 0}
+  - instruccionMoverPiernaAtras: {instanceID: 0}
+  - instruccionMoverAduccionPiernasManoDerecha: {instanceID: 0}
+  - instruccionMoverAduccionPiernasManosIzquierda: {instanceID: 0}
+  - instruccionMoverPiernaBrazoDerecha: {instanceID: 0}
+  - instruccionMoverPiernaBrazoIzquerdo: {instanceID: 0}
+  - instruccionMoverBrazosAbiertosRodillaDerecha: {instanceID: 0}
+  - instruccionMoverBrazosAbiertosRodillaIzquerda: {instanceID: 0}
+  - instruccionMoverBrazoAtrasCabezaInclinada: {instanceID: 0}
+  - instruccionMoverBrazoIzquierdoAlaCabeza: {instanceID: 0}
+  - instruccionBrazosAlaCabeza: {instanceID: 0}
+  - instruccionMoverBrazosAtras: {instanceID: 0}
+  - instruccionMoverBrazosAdelante: {instanceID: 0}
+  - instruccionMoverInclinarBrazos: {instanceID: 0}
+  - instruccionMoverBrazosArribaInclinarIzquierda: {instanceID: 0}
+  - instruccionMoverManoDerechaArribaIncinarIzquierda: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
