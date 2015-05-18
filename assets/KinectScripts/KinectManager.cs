@@ -1193,7 +1193,18 @@ public class KinectManager : MonoBehaviour
 						} else {
 							Debug.Log("No Push");
 						}
-						
+
+						if(gestureData.gesture == KinectGestures.Gestures.SwipeDown) {
+							if(EscenarioInicial.initiated) {
+								EscenarioInicial.scrollControl(50);
+							}
+						}
+
+						if(gestureData.gesture == KinectGestures.Gestures.SwipeUp) {
+							if(EscenarioInicial.initiated) {
+								EscenarioInicial.scrollControl(-50);
+							}
+						}
 						foreach(KinectGestures.GestureListenerInterface listener in gestureListeners)
 						{
 							if(listener.GestureCompleted(Player1ID, 0, gestureData.gesture, 
