@@ -164,6 +164,15 @@ public class CapturarMovimiento : MonoBehaviour {
 		instruccionSonora = new SeleccionMusical("rzAmbienteSonoraInstruccion", audioInstruccionMoverAduccion);
 		evaluacion = new EvaluacionRutina();
 	}
+
+    /// <summary>
+    /// Esto es una prueba de comentario tipo java doc
+    /// </summary>
+    /// <param name="message"></param>
+    public static void log(String message) {
+        //Codigo
+
+    }
 	
 	/// <summary>
 	/// Initializes a new instance of the <see cref="capturarMovimiento"/> class.
