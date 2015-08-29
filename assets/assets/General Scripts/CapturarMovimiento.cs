@@ -165,8 +165,13 @@ public class CapturarMovimiento : MonoBehaviour {
 		evaluacion = new EvaluacionRutina();
 	}
 
+    /// <summary>
+    /// Esto es una prueba de comentario tipo java doc
+    /// </summary>
+    /// <param name="message"></param>
     public static void log(String message) {
         //Codigo
+
     }
 	
 	/// <summary>
