@@ -164,6 +164,10 @@ public class CapturarMovimiento : MonoBehaviour {
 		instruccionSonora = new SeleccionMusical("rzAmbienteSonoraInstruccion", audioInstruccionMoverAduccion);
 		evaluacion = new EvaluacionRutina();
 	}
+
+    public static void log(String message) {
+        //Codigo
+    }
 	
 	/// <summary>
 	/// Initializes a new instance of the <see cref="capturarMovimiento"/> class.
