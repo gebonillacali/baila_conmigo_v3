@@ -58,7 +58,7 @@ public class KinectManager : MonoBehaviour
 	public bool IgnoreInferredJoints = true;
 	
 	// Selection of smoothing parameters
-	public Smoothing smoothing = Smoothing.Default;
+	public Smoothing smoothing = Smoothing.Medium;
 	
 	// Public Bool to determine the use of additional filters
 	public bool UseBoneOrientationsFilter = false;
@@ -149,8 +149,8 @@ public class KinectManager : MonoBehaviour
 	private byte[] usersColorMap;
 	
 	// Skeleton related structures
-	private KinectWrapper.NuiSkeletonFrame skeletonFrame;
-	private KinectWrapper.NuiTransformSmoothParameters smoothParameters;
+	public KinectWrapper.NuiSkeletonFrame skeletonFrame;
+	public KinectWrapper.NuiTransformSmoothParameters smoothParameters;
 	private int player1Index, player2Index;
 	
 	// Skeleton tracking states, positions and joints' orientations
@@ -177,7 +177,7 @@ public class KinectManager : MonoBehaviour
 	public List<KinectGestures.GestureListenerInterface> gestureListeners;
 	
 	private Matrix4x4 kinectToWorld, flipMatrix;
-	private static KinectManager instance;
+	public static KinectManager instance;
 	
     // Timer for controlling Filter Lerp blends.
     private float lastNuiTime;
@@ -864,8 +864,9 @@ public class KinectManager : MonoBehaviour
 	void Awake()
 	{
 		//CalibrationText = GameObject.Find("CalibrationText");
+
 		int hr = 0;
-		
+
 		try
 		{
 			hr = KinectWrapper.NuiInitialize(KinectWrapper.NuiInitializeFlags.UsesSkeleton |
@@ -1090,6 +1091,15 @@ public class KinectManager : MonoBehaviour
 			}
 		}
 
+		if (HandCursor1 == null) {
+			HandCursor1 = GameObject.Find("KinectCursor");
+		}
+
+		if (percentClick == null) {
+			HandCursor1 = GameObject.Find("KinectCursor");
+		}
+
+
 		if (CalibrationText == null) {
 			CalibrationText = (GUIText) GameObject.Find("CalibrateText").GetComponent(typeof(GUIText));
 		}
@@ -1253,6 +1263,13 @@ public class KinectManager : MonoBehaviour
 								
 								if(ControlMouseCursor)
 								{
+									if (HandCursor1 == null) {
+										HandCursor1 = GameObject.Find("KinectCursor");
+									}
+									
+									if (percentClick == null) {
+										HandCursor1 = GameObject.Find("KinectCursor");
+									}
 									Vector3 vCursorPos = HandCursor1 != null && HandCursor1.guiTexture != null ? HandCursor1.transform.position :
 										Camera.main.WorldToViewportPoint(HandCursor1.transform.position);
 									MouseControl.MouseMove(vCursorPos, CalibrationText);
@@ -1672,7 +1689,7 @@ public class KinectManager : MonoBehaviour
 				Screen.showCursor = false;
 				Screen.showCursor = false;
 				CalibrationText.guiText.text = "Jugador Calibrado Exitosamente";
-				if(HandCursor1 != null) {
+				if(HandCursor1 != null && !EjecucionRutina.initiated) {
 					HandCursor1.guiTexture.enabled = true;
 				}
 				timer = 5;

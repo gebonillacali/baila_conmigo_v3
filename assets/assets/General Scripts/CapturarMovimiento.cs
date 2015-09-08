@@ -201,6 +201,12 @@ public class CapturarMovimiento : MonoBehaviour {
 			audios.CambiarCancion(cargarCancion, 192.6);
 			cargarCancion = false;
 		}
+
+//		if (EjecucionRutina.paused) {
+//			audio.Pause();
+//		} else {
+//			audio.Play();
+//		}
 		
 		/*if(bFocusInit){	
 			//string nombreArticulacion = movimiento.GetModelo().GetManoIzquierda().GetName();
