@@ -314,21 +314,25 @@ public class EjecucionRutina : MonoBehaviour {
 
 
 	public void OnGUI (){
-		if (paused){
-
-			GUI.BeginGroup(new Rect (((Screen.width/2)- (gW/2)),((Screen.height/2)-(gW/2)), gW, GH));
-			if (GUI.Button(new Rect(0,0,bW,bH),"Menu Principal"))
-			{
-				EscenarioRutinaManual.vaciarArr();
-				Application.LoadLevel("ok");
+		if (paused) {
+						animation.Stop ();
+						GUI.BeginGroup (new Rect (((Screen.width / 2) - (gW / 2)), ((Screen.height / 2) - (gW / 2)), gW, GH));
+						if (GUI.Button (new Rect (0, 0, bW, bH), "Menu Principal")) {
+								EscenarioRutinaManual.vaciarArr ();
+								Application.LoadLevel ("ok");
 				
-			}
-			if(GUI.Button(new Rect(0,120,bW,bH),"Salir Del Juego")){
+						}
+						if (GUI.Button (new Rect (0, 120, bW, bH), "Salir Del Juego")) {
 				
-				Application.Quit();
-			}
-			GUI.EndGroup();
-		}
+								Application.Quit ();
+						}
+						GUI.EndGroup ();
+				} else {
+					if(!animation.isPlaying)
+					{
+						animation.Play();
+					}
+				}
 	}
 
 	 public void windowFunc(int id){
