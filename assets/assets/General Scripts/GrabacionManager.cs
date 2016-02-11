@@ -20,7 +20,10 @@ public class GrabacionManager : MonoBehaviour {
 	}
 	
 	void OnGUI () {
-		
+		GUI.BeginGroup(new Rect (((Screen.width/2)- (gW/2)),((Screen.height/2)-(gW/2)), gW, GH));
+		if (GUI.Button(new Rect(0,0,bW,bH),"Iniciar Grabacion")) {
+		}		
+		GUI.EndGroup();
 	}
 	
 	// Update is called once per frame
