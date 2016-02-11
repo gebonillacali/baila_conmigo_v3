@@ -9,11 +9,11 @@ using Kinect;
  * 
  * @author gbonilla@unbosque.edu.co - efrancor@unbosque.edu.co
  */
-public class GrabadorMovimiento : MonoBehaviour {
+public class GrabadorMovimiento {
 
 	private string path = "Assets/Kinect/Recordings/playback";
 
-	private bool isRecording = false;
+	private bool recording = false;
 	private ArrayList currentData = new ArrayList();
 	private string nameGrabador = "movement";
 	private int fileCount;
@@ -23,29 +23,30 @@ public class GrabadorMovimiento : MonoBehaviour {
 	
 	}
 
-	// Update is called once per frame
-	void Update () {
-		if(!isRecording){
-			if(Input.GetKeyDown(KeyCode.F10)){
-				StartRecord();
-			}
-		} else {
-			if(Input.GetKeyDown(KeyCode.F10)){
-				StopRecord();
-			}
-			if (KinectWrapper.PollSkeleton(ref KinectManager.instance.smoothParameters, ref KinectManager.instance.skeletonFrame)){
-				currentData.Add(KinectManager.instance.skeletonFrame);
-			}
-		}
+	public void StartRecord() {
+		recording = true;
+		Debug.Log("start recording");
+		currentData = new ArrayList();
 	}
 
-	void StartRecord() {
-		isRecording = true;
-		Debug.Log("start recording");
+	public bool isRecording() {
+		return recording;
 	}
+
 	
-	void StopRecord() {
-		isRecording = false;
+	public string record() {
+		string recordMessage = "No Data";
+		if (KinectWrapper.PollSkeleton (ref KinectManager.instance.smoothParameters, ref KinectManager.instance.skeletonFrame)) {                
+			currentData.Add (KinectManager.instance.skeletonFrame.SkeletonData);
+			recordMessage = "" + KinectManager.instance.skeletonFrame.SkeletonData.Length;
+		}
+		return recordMessage;
+	}
+
+	
+	public void StopRecord() {
+		recording = false;
+
 		//edit by lxjk
 		string filePath = path + nameGrabador;
 		FileStream output = new FileStream(@filePath,FileMode.Create);
