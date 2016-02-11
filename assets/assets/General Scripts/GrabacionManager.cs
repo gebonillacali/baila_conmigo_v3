@@ -23,6 +23,9 @@ public class GrabacionManager : MonoBehaviour {
 		GUI.BeginGroup(new Rect (((Screen.width/2)- (gW/2)),((Screen.height/2)-(gW/2)), gW, GH));
 		if (GUI.Button(new Rect(0,0,bW,bH),"Iniciar Grabacion")) {
 		}		
+		
+		if(GUI.Button(new Rect(0,120,bW,bH),"Detener Grabacion")){						
+		}
 		GUI.EndGroup();
 	}
 	
