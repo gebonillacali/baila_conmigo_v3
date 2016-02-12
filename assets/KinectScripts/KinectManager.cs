@@ -1200,8 +1200,6 @@ public class KinectManager : MonoBehaviour
 						{
 							Debug.Log("Push");
 							ResetPlayerGestures(Player1ID);
-						} else {
-							Debug.Log("No Push");
 						}
 
 						if(gestureData.gesture == KinectGestures.Gestures.SwipeDown) {

@@ -14,23 +14,37 @@ public class GrabacionManager : MonoBehaviour {
 	private int bH = 50;
 	private int gW = 200;
 	private int GH = 170;
+
+	private GrabadorMovimiento grabadorMovimiento;
+	
+	public GUIText CalibrationText;
+	public KinectManager kinectManager;
 	
 	// Use this for initialization
 	void Start () {
+		grabadorMovimiento = new GrabadorMovimiento (kinectManager);
 	}
 	
 	void OnGUI () {
 		GUI.BeginGroup(new Rect (((Screen.width/2)- (gW/2)),((Screen.height/2)-(gW/2)), gW, GH));
 		if (GUI.Button(new Rect(0,0,bW,bH),"Iniciar Grabacion")) {
+			grabadorMovimiento.StartRecord();
 		}		
 		
-		if(GUI.Button(new Rect(0,120,bW,bH),"Detener Grabacion")){						
+		if(GUI.Button(new Rect(0,120,bW,bH),"Detener Grabacion")){		
+			grabadorMovimiento.StopRecord();
 		}
 		GUI.EndGroup();
 	}
 	
 	// Update is called once per frame
 	void Update () {
+
+		if (grabadorMovimiento.isRecording()) {
+			if (grabadorMovimiento.record().Length > 0) {
+				Debug.Log(grabadorMovimiento.record());
+			}
+		}
 	}
 }
 
