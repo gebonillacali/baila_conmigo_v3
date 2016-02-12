@@ -18,10 +18,11 @@ public class GrabacionManager : MonoBehaviour {
 	private GrabadorMovimiento grabadorMovimiento;
 	
 	public GUIText CalibrationText;
+	public KinectManager kinectManager;
 	
 	// Use this for initialization
 	void Start () {
-		grabadorMovimiento = new GrabadorMovimiento ();
+		grabadorMovimiento = new GrabadorMovimiento (kinectManager);
 	}
 	
 	void OnGUI () {
@@ -38,9 +39,11 @@ public class GrabacionManager : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		Debug.Log ("Running");
+
 		if (grabadorMovimiento.isRecording()) {
-			grabadorMovimiento.record();
+			if (grabadorMovimiento.record().Length > 0) {
+				Debug.Log(grabadorMovimiento.record());
+			}
 		}
 	}
 }
