@@ -41,7 +41,7 @@ public class GrabacionManager : MonoBehaviour, GrabadorMovimiento.GrabacionStatu
 				GUI.Label(new Rect (0, 0, bW, bH), "Ingrese el nombre de la rutina");
 				nombreRutina = GUI.TextField(new Rect (0, 60, bW, bH), nombreRutina);
 				if (GUI.Button(new Rect (0, 120, bW, bH), "Ingresar")) {
-					grabadorMovimiento.setRoutineName(nombreRutina);
+					grabadorMovimiento.setRoutineName(nombreRutina.Replace(" ", ""));
 				}
 			} else {
 			if (GUI.Button (new Rect (0, 120, bW, bH), "Detener Grabacion")) {		
@@ -69,9 +69,16 @@ public class GrabacionManager : MonoBehaviour, GrabadorMovimiento.GrabacionStatu
 	public void grabacionCompletada(string pathFile) {
 		string rutinasJsonStr = File.ReadAllText (@path + "rutinas.json");
 		Debug.Log(rutinasJsonStr);
-		ArrayList rutinasData = (ArrayList)JSON.JsonDecode(rutinasJsonStr);
-		rutinasData.Add(pathFile);
-		rutinasJsonStr = JSON.JsonEncode(rutinasData);
+		JSONArray rutinasData = JSONArray.Parse(rutinasJsonStr).AsArray;
+
+		JSONClass rutina = new JSONClass();
+		rutina["nombreRutina"] = nombreRutina;
+		rutina["pathRutina"] = pathFile;
+
+		rutinasData.Add(rutina);
+
+		rutinasJsonStr = JSON.JsonEncode(rutinasData.ToString()).Replace("\"[","[").Replace("]\"","]").Replace("\\","");
+		Debug.Log(rutinasJsonStr);
 		var sr = File.CreateText(@path + "rutinas.json");
 		sr.WriteLine (rutinasJsonStr);
 		sr.Close();
