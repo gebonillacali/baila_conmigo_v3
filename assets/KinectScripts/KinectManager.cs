@@ -1166,7 +1166,7 @@ public class KinectManager : MonoBehaviour
 				}
 			}
 			
-			if(KinectWrapper.PollSkeleton(ref smoothParameters, ref skeletonFrame))
+			if(KinectWrapper.PollSkeleton(ref smoothParameters, ref skeletonFrame, false))
 			{
 				ProcessSkeleton();
 			}
@@ -1784,6 +1784,10 @@ public class KinectManager : MonoBehaviour
 		(int)KinectWrapper.NuiSkeletonPositionIndex.AnkleRight,
 		(int)KinectWrapper.NuiSkeletonPositionIndex.FootRight,
 	};
+
+	public Vector3 getSkeletonPos(Kinect.NuiSkeletonFrame skeletonFrame) {
+		return kinectToWorld.MultiplyPoint3x4 (skeletonFrame.SkeletonData[0].Position);
+	}
 	
 	// Process the skeleton data
 	void ProcessSkeleton()

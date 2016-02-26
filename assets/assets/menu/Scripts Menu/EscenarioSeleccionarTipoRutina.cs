@@ -15,6 +15,19 @@ public class EscenarioSeleccionarTipoRutina : MonoBehaviour {
 
 	void OnGUI (){
 
+		GUIStyle buttonsStyle = new GUIStyle(GUI.skin.button);
+		buttonsStyle.fontSize = 20;
+		
+		GUIStyle labelsStyle = new GUIStyle(GUI.skin.label);
+		labelsStyle.fontSize = 20;
+		
+		GUIStyle textFileldsStyle = new GUIStyle(GUI.skin.textField);
+		textFileldsStyle.fontSize = 20;
+
+		GUIStyle boxStyle = new GUIStyle(GUI.skin.box);
+		boxStyle.fontSize = 25;
+		boxStyle.fontStyle = FontStyle.Bold;
+
 		if (paused ){
 
 			limpiar = EscenarioRutinaManual.movimientosSeleccionados;
@@ -32,22 +45,26 @@ public class EscenarioSeleccionarTipoRutina : MonoBehaviour {
 			GUI.EndGroup();
 		}
 
+		GUI.Box(new Rect(440,150,500,400), "Opciones de Reproduccion", boxStyle);
 
-		if(GUI.Button(new Rect(420,220,150,40), "Manual")) {
+		if(GUI.Button(new Rect(515,200,350,50), "Manual", buttonsStyle)) {
 			Application.LoadLevel("ok2");
 		}
 		
-		if(GUI.Button(new Rect(700,220,150,40), "Automatico")) {
+		if(GUI.Button(new Rect(515,270,350,50), "Automatico", buttonsStyle)) {
 			Application.LoadLevel("ok4");
 		}
 
-		if(GUI.Button(new Rect(900,450,200,40), "Cambiar de jugador")) {
+		if(GUI.Button(new Rect(515,340,350,50), "Cambiar de jugador", buttonsStyle)) {
 			Application.LoadLevel("ok");
 		}
 
-		if(GUI.Button(new Rect(1050,510,50,40),"Salir")){
-			
-			Application.Quit();
+		if(GUI.Button (new Rect (515,410,350,50), "Reproduccion de rutinas Creadas", buttonsStyle)){
+			Application.LoadLevel("4.EscenarioInterfazdeReproduccion");
+		}
+
+		if(GUI.Button(new Rect(515,480,350,50),"Volver", buttonsStyle)){			
+			Application.LoadLevel("ok");
 		}
 		
 		

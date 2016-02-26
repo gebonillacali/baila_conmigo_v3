@@ -31,20 +31,29 @@ public class GrabacionManager : MonoBehaviour, GrabadorMovimiento.GrabacionStatu
 	}
 	
 	void OnGUI () {
+		GUIStyle buttonsStyle = new GUIStyle(GUI.skin.button);
+		buttonsStyle.fontSize = 20;
+
+		GUIStyle labelsStyle = new GUIStyle(GUI.skin.label);
+		labelsStyle.fontSize = 20;
+
+		GUIStyle textFileldsStyle = new GUIStyle(GUI.skin.textField);
+		textFileldsStyle.fontSize = 20;
+
 		GUI.BeginGroup(new Rect (((Screen.width/2)- (gW/2)),((Screen.height/2)-(gW/2)), gW, GH));
 		if (!grabadorMovimiento.isRecording ()) {
-			if (GUI.Button (new Rect (0, 0, bW, bH), "Iniciar Grabacion")) {
+			if (GUI.Button (new Rect (0, 0, bW, bH), "Iniciar Grabacion", buttonsStyle)) {
 					grabadorMovimiento.StartRecord ();
 			}		
 		} else {
 			if (grabadorMovimiento.isWaitingForRoutineName()) {
-				GUI.Label(new Rect (0, 0, bW, bH), "Ingrese el nombre de la rutina");
-				nombreRutina = GUI.TextField(new Rect (0, 60, bW, bH), nombreRutina);
-				if (GUI.Button(new Rect (0, 120, bW, bH), "Ingresar")) {
+				GUI.Label(new Rect (0, 0, bW, bH), "Ingrese el nombre de la rutina", labelsStyle);
+				nombreRutina = GUI.TextField(new Rect (0, 60, bW, bH), nombreRutina, textFileldsStyle);
+				if (GUI.Button(new Rect (0, 120, bW, bH), "Ingresar", buttonsStyle)) {
 					grabadorMovimiento.setRoutineName(nombreRutina.Replace(" ", ""));
 				}
 			} else {
-			if (GUI.Button (new Rect (0, 120, bW, bH), "Detener Grabacion")) {		
+			if (GUI.Button (new Rect (0, 120, bW, bH), "Detener Grabacion", buttonsStyle)) {		
 					grabadorMovimiento.StopRecord ();
 				}
 			}

@@ -16,8 +16,205 @@ using System.Text;
 
 // Wrapper class that holds the various structs and dll imports
 // needed to set up a model with the Kinect.
+using System.Runtime.Serialization.Formatters.Binary;
+
+
 public class KinectWrapper
 {
+	private static string inputFile = "";
+	private static NuiSkeletonFrame []skeletonFrames;
+	
+	static int curFrame;
+	static int frameCount;
+	static bool playing;
+	
+	public static bool isPlaying() {
+		return playing && skeletonFrames.Length > 0 && curFrame < (skeletonFrames.Length - 1);
+	}
+	
+	public static void setInputFile(string inputFileStr) {
+		inputFile = inputFileStr;
+		LoadPlaybackFile ();
+		playing = true;
+	}
+	
+	private static void LoadPlaybackFile()  {
+		FileStream input = new FileStream(@inputFile, FileMode.Open);
+		BinaryFormatter bf = new BinaryFormatter();
+		SerialSkeletonFrame[] serialSkeleton = (SerialSkeletonFrame[])bf.Deserialize(input);
+		skeletonFrames = new NuiSkeletonFrame[serialSkeleton.Length];
+		for(int ii = 0; ii < serialSkeleton.Length; ii++){
+			skeletonFrames[ii] = serialSkeleton[ii].deserialize();
+		}
+		input.Close();
+		curFrame = 0;
+		frameCount = 0;
+		Debug.Log("Simulating "+@inputFile + " frames loaded " + skeletonFrames.Length);
+	}
+	
+	[Serializable]
+	public struct SerialVec4 {
+		float x,y,z,w;
+		
+		public SerialVec4(Vector4 vec){
+			this.x = vec.x;
+			this.y = vec.y;
+			this.z = vec.z;
+			this.w = vec.w;
+		}
+		
+		public Vector4 deserialize() {
+			return new Vector4(x,y,z,w);
+		}
+		
+		public Quaternion GetQuaternion() {
+			return new Quaternion(x,y,z,w);
+		}
+	}
+	
+	// used in NuiSkeletonBoneRotation
+	// kinect Sdk 1.7.0, June 2013, Jason Added
+	[Serializable]
+	public struct SerialMatrix4 {
+		float m11;
+		float m12;
+		float m13;
+		float m14;
+		float m21;
+		float m22;
+		float m23;
+		float m24;
+		float m31;
+		float m32;
+		float m33;
+		float m34;
+		float m41;
+		float m42;
+		float m43;
+		float m44;
+		
+		public SerialMatrix4(Matrix4x4 mat){
+			this.m11 = mat.m00;
+			this.m12 = mat.m01;
+			this.m13 = mat.m02;
+			this.m14 = mat.m03;
+			this.m21 = mat.m10;
+			this.m22 = mat.m11;
+			this.m23 = mat.m12;
+			this.m24 = mat.m13;
+			this.m31 = mat.m20;
+			this.m32 = mat.m21;
+			this.m33 = mat.m22;
+			this.m34 = mat.m23;
+			this.m41 = mat.m30;
+			this.m42 = mat.m31;
+			this.m43 = mat.m32;
+			this.m44 = mat.m33;
+		}
+		
+		public Matrix4x4 deserialize() {
+			Matrix4x4 mat = new Matrix4x4();
+			
+			mat.m00 = m11;
+			mat.m01 = m12;
+			mat.m02 = m13;
+			mat.m03 = m14;
+			mat.m10 = m21;
+			mat.m11 = m22;
+			mat.m12 = m23;
+			mat.m13 = m24;
+			mat.m20 = m31;
+			mat.m21 = m32;
+			mat.m22 = m33;
+			mat.m23 = m34;
+			mat.m30 = m41;
+			mat.m31 = m42;
+			mat.m32 = m43;
+			mat.m33 = m44;
+			
+			return mat;
+		}
+	}
+	
+	[Serializable]
+	public struct SerialSkeletonData {
+		public NuiSkeletonTrackingState eTrackingState;
+		public uint dwTrackingID;
+		public uint dwEnrollmentIndex_NotUsed;
+		public uint dwUserIndex;
+		public SerialVec4 Position;
+		public SerialVec4[] SkeletonPositions;
+		public NuiSkeletonPositionTrackingState[] eSkeletonPositionTrackingState;
+		public uint dwQualityFlags;
+		
+		public SerialSkeletonData (NuiSkeletonData nui) {
+			this.eTrackingState = nui.eTrackingState;
+			this.dwTrackingID = nui.dwTrackingID;
+			this.dwEnrollmentIndex_NotUsed = nui.dwEnrollmentIndex_NotUsed;
+			this.dwUserIndex = nui.dwUserIndex;
+			this.Position = new SerialVec4(nui.Position);
+			this.SkeletonPositions = new SerialVec4[20];
+			for(int ii = 0; ii < 20; ii++){
+				this.SkeletonPositions[ii] = new SerialVec4(nui.SkeletonPositions[ii]);
+			}
+			this.eSkeletonPositionTrackingState = nui.eSkeletonPositionTrackingState;
+			this.dwQualityFlags = nui.dwQualityFlags;
+		}
+		
+		public NuiSkeletonData deserialize() {
+			NuiSkeletonData nui = new NuiSkeletonData();
+			nui.eTrackingState = this.eTrackingState;
+			nui.dwTrackingID = this.dwTrackingID;
+			nui.dwEnrollmentIndex_NotUsed = this.dwEnrollmentIndex_NotUsed;
+			nui.dwUserIndex = this.dwUserIndex;
+			nui.Position = this.Position.deserialize();
+			nui.SkeletonPositions = new Vector4[20];
+			for(int ii = 0; ii < 20; ii++){
+				nui.SkeletonPositions[ii] = this.SkeletonPositions[ii].deserialize();
+			}
+			nui.eSkeletonPositionTrackingState = this.eSkeletonPositionTrackingState;
+			nui.dwQualityFlags = this.dwQualityFlags;
+			return nui;
+		}
+	}
+	
+	[Serializable]
+	public struct SerialSkeletonFrame
+	{
+		public Int64 liTimeStamp;
+		public uint dwFrameNumber;
+		public uint dwFlags;
+		public SerialVec4 vFloorClipPlane;
+		public SerialVec4 vNormalToGravity;
+		public SerialSkeletonData[] SkeletonData;
+		
+		public SerialSkeletonFrame (NuiSkeletonFrame nui) {
+			this.liTimeStamp = nui.liTimeStamp;
+			this.dwFrameNumber = nui.dwFrameNumber;
+			this.dwFlags = nui.dwFlags;
+			this.vFloorClipPlane = new SerialVec4(nui.vFloorClipPlane);
+			this.vNormalToGravity = new SerialVec4(nui.vNormalToGravity);
+			this.SkeletonData = new SerialSkeletonData[6];
+			for(int ii = 0; ii < 6; ii++){
+				this.SkeletonData[ii] = new SerialSkeletonData(nui.SkeletonData[ii]);
+			}
+		}
+		
+		public NuiSkeletonFrame deserialize() {
+			NuiSkeletonFrame nui = new NuiSkeletonFrame();
+			nui.liTimeStamp = this.liTimeStamp;
+			nui.dwFrameNumber = this.dwFrameNumber;
+			nui.dwFlags = this.dwFlags;
+			nui.vFloorClipPlane = this.vFloorClipPlane.deserialize();
+			nui.vNormalToGravity = this.vNormalToGravity.deserialize();
+			nui.SkeletonData = new NuiSkeletonData[6];
+			for(int ii = 0; ii < 6; ii++){
+				nui.SkeletonData[ii] = this.SkeletonData[ii].deserialize();
+			}
+			return nui;
+		}
+	}
+
 	public static class Constants
 	{
 		public const int NuiSkeletonCount = 6;
@@ -689,9 +886,23 @@ public class KinectWrapper
 		return jointIndex;
 	}
 
-	public static bool PollSkeleton(ref NuiTransformSmoothParameters smoothParameters, ref NuiSkeletonFrame skeletonFrame)
+	public static bool PollSkeleton(ref NuiTransformSmoothParameters smoothParameters, ref NuiSkeletonFrame skeletonFrame, bool isFile)
 	{
 		bool newSkeleton = false;
+
+		if (isFile) {
+			frameCount++;
+			//Debug.Log ("curFrame:" + curFrame + " - frameCount:" + frameCount);
+			
+			if(frameCount >= 10){
+				frameCount = 0;
+				curFrame++;
+				newSkeleton = curFrame < (skeletonFrames.Length - 1);
+				getSkeleton(ref skeletonFrame);
+				Debug.Log("Skeleton obtenido " + curFrame);
+			}		
+			return newSkeleton;
+		} else {
 		
 		int hr = KinectWrapper.NuiSkeletonGetNextFrame(0, ref skeletonFrame);
 		if(hr == 0)
@@ -709,6 +920,34 @@ public class KinectWrapper
 		}
 		
 		return newSkeleton;
+		}
+	}
+
+	private static void getSkeleton(ref NuiSkeletonFrame skeletonFrame) {
+		skeletonFrame.dwFlags = skeletonFrames [curFrame].dwFlags;
+
+		skeletonFrame.dwFrameNumber = skeletonFrames [curFrame].dwFrameNumber;
+		skeletonFrame.liTimeStamp = skeletonFrames [curFrame].liTimeStamp;
+		skeletonFrame.SkeletonData = new NuiSkeletonData[skeletonFrames [curFrame].SkeletonData.Length];
+		for (int i=0; i < skeletonFrames[curFrame].SkeletonData.Length; i++) {
+			skeletonFrame.SkeletonData[i].dwEnrollmentIndex_NotUsed = skeletonFrames [curFrame].SkeletonData[i].dwEnrollmentIndex_NotUsed;
+			skeletonFrame.SkeletonData[i].dwQualityFlags = skeletonFrames [curFrame].SkeletonData[i].dwQualityFlags;
+			skeletonFrame.SkeletonData[i].dwTrackingID = skeletonFrames [curFrame].SkeletonData[i].dwTrackingID;
+			skeletonFrame.SkeletonData[i].dwUserIndex = skeletonFrames [curFrame].SkeletonData[i].dwUserIndex;
+			skeletonFrame.SkeletonData[i].eSkeletonPositionTrackingState = new NuiSkeletonPositionTrackingState[skeletonFrames [curFrame].SkeletonData[i].eSkeletonPositionTrackingState.Length];
+			for (int j=0; j < skeletonFrames[curFrame].SkeletonData[i].eSkeletonPositionTrackingState.Length; j++) {
+				skeletonFrame.SkeletonData[i].eSkeletonPositionTrackingState[j] = skeletonFrames [curFrame].SkeletonData[i].eSkeletonPositionTrackingState[j];
+			}
+			skeletonFrame.SkeletonData[i].eTrackingState = skeletonFrames [curFrame].SkeletonData[i].eTrackingState;
+			skeletonFrame.SkeletonData[i].Position = skeletonFrames [curFrame].SkeletonData[i].Position;
+			skeletonFrame.SkeletonData[i].SkeletonPositions = new Vector4[skeletonFrames [curFrame].SkeletonData[i].SkeletonPositions.Length];
+			for (int k = 0; k < skeletonFrames [curFrame].SkeletonData[i].SkeletonPositions.Length; k++) {
+				skeletonFrame.SkeletonData[i].SkeletonPositions[k] = skeletonFrames [curFrame].SkeletonData[i].SkeletonPositions[k];	
+			}
+		}
+
+		skeletonFrame.vFloorClipPlane = skeletonFrames [curFrame].vFloorClipPlane;
+		skeletonFrame.vNormalToGravity = skeletonFrames [curFrame].vFloorClipPlane;
 	}
 	
 	public static bool PollColor(IntPtr colorStreamHandle, ref byte[] videoBuffer, ref Color32[] colorImage)

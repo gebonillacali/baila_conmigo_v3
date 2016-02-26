@@ -2,12 +2,14 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
-using Kinect;
 
 /// <summary>
 /// Grabador movimiento. Clase que realiza la grabacion de movimientos.
 /// gbonilla@unbosque.edu.co - efrancor@unbosque.edu.co
 /// </summary>
+using Kinect;
+
+
 public class GrabadorMovimiento {
 
 	/// <summary>
@@ -30,6 +32,7 @@ public class GrabadorMovimiento {
 	private int fileCount;
 	private KinectManager kinectManager;
 	private GrabacionStatus grabacionStatusObj;
+	private bool isConverterRequired = true;
 
 	/// <summary>
 	/// Inicializa una nueva instancia de la clase <see cref="GrabadorMovimiento"/>.
@@ -81,10 +84,11 @@ public class GrabadorMovimiento {
 	/// </summary>
 	public string record() {
 		string recordMessage = "";
-		if (KinectWrapper.PollSkeleton (ref kinectManager.smoothParameters, ref kinectManager.skeletonFrame)) {                
+		//if (KinectWrapper.PollSkeleton (ref kinectManager.smoothParameters, ref kinectManager.skeletonFrame, false)) {                
+		//if (kinectManager.skeletonFrame != null) {                
 			currentData.Add (kinectManager.skeletonFrame);
 			recordMessage = "Obteniendo... ";
-		}
+		//}
 		return recordMessage;
 	}
 
@@ -100,17 +104,34 @@ public class GrabadorMovimiento {
 		FileStream output = new FileStream(@filePath,FileMode.Create);
 
 		BinaryFormatter bf = new BinaryFormatter();
-		
-		SerialSkeletonFrame[] data = new SerialSkeletonFrame[currentData.Count];
-		for(int ii = 0; ii < currentData.Count; ii++){
-			data[ii] = new SerialSkeletonFrame(convertSkeletonFrame(currentData[ii]));
+		if (isConverterRequired) {
+			recordWithConversion(output, bf);
+		} else {
+			recordWithOutConversion(output, bf);
 		}
-		bf.Serialize(output, data);
+
 		output.Close();
 		grabacionStatusObj.grabacionCompletada (filePath);
 
 		Debug.Log("stop recording");
 	}
+
+	private void recordWithOutConversion(FileStream fs, BinaryFormatter bf) {
+		KinectWrapper.SerialSkeletonFrame[] data = new KinectWrapper.SerialSkeletonFrame[currentData.Count];
+		for(int ii = 0; ii < currentData.Count; ii++){
+			data[ii] = new KinectWrapper.SerialSkeletonFrame(currentData[ii]);
+		}
+		bf.Serialize(fs, data);
+	}
+
+	private void recordWithConversion(FileStream fs, BinaryFormatter bf) {
+		SerialSkeletonFrame[] data = new SerialSkeletonFrame[currentData.Count];
+		for(int ii = 0; ii < currentData.Count; ii++){
+			data[ii] = new SerialSkeletonFrame(convertSkeletonFrame(currentData[ii]));
+		}
+		bf.Serialize(fs, data);
+	}
+
 
 	/// <summary>
 	/// Convierte el SkeletonFrame de <see cref="KinectWrapper.NuiSkeletonFrame"/> a <see cref="Kinect.NuiSkeletonFrame"/>
