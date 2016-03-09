@@ -53,12 +53,19 @@
  <Reference Include="UnityEngine.UI">
  <HintPath>C:/Program Files (x86)/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/4.6.2/UnityEngine.UI.dll</HintPath>
  </Reference>
+ <Reference Include="ICSharpCode.SharpZipLib">
+ <HintPath>C:/Users/gbonilla/Documents/Universidad/seminario 1/Proyecto de Investigacion/Baila_Conmigo/Baila Conmigo/Producto desarrollado/BCI/baila conmigo/Assets/plugins/ICSharpCode.SharpZipLib.dll</HintPath>
+ </Reference>
  <Reference Include="OpenNI.Net">
  <HintPath>C:/Users/gbonilla/Documents/Universidad/seminario 1/Proyecto de Investigacion/Baila_Conmigo/Baila Conmigo/Producto desarrollado/BCI/baila conmigo/Assets/zigfu/scripts/_Internal/OpenNI.Net.dll</HintPath>
  </Reference>
  <Reference Include="ZDK">
  <HintPath>C:/Users/gbonilla/Documents/Universidad/seminario 1/Proyecto de Investigacion/Baila_Conmigo/Baila Conmigo/Producto desarrollado/BCI/baila conmigo/Assets/zigfu/scripts/_Internal/ZDK.dll</HintPath>
  </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="Assembly-CSharp-firstpass.csproj">
+      <Project>{23E8BCFF-8FBA-57E6-E168-BBC5D041416D}</Project>      <Name>Assembly-CSharp-firstpass</Name>    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
