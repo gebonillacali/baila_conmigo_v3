@@ -317,6 +317,7 @@ public class AvatarController : MonoBehaviour
 				continue;
 			
 			bones[boneIndex] = animatorComponent.GetBoneTransform(boneIndex2MecanimMap[boneIndex]);
+			Debug.Log(bones[boneIndex].name + ":" + boneIndex);
 		}
 	}
 	

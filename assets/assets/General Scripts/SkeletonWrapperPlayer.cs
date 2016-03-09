@@ -2,18 +2,25 @@ using UnityEngine;
 using System.Collections;
 
 using Kinect;
+using System;
 
 public class SkeletonWrapperPlayer : MonoBehaviour {
 
 
 	private Kinect.KinectInterface kinect;	
+	public KinectManager kinectManager;
 	private bool updatedSkeleton = false;
 	private bool newSkeleton = false;
 	private string pathFile = "";
+	private bool isPlaying = false;
 
 	public void setPathFile(string pathFile) {
 		this.pathFile = pathFile;
 		((ReproductorArchivoLector)kinect).setInputFile (pathFile);
+		((ReproductorArchivoLector)kinect).kinectManager = kinectManager;
+		songPlayer.clip = audioModulo0;
+		songPlayer.Play ();
+		isPlaying = true;
 	}
 	
 	[HideInInspector]
@@ -37,6 +44,18 @@ public class SkeletonWrapperPlayer : MonoBehaviour {
 	
 	private Matrix4x4 kinectToWorld;
 	public Matrix4x4 flipMatrix;
+
+	private static float PERCENT_PASSED = 85.0f;
+
+	//canciones
+	public AudioClip audioModulo0;
+	public AudioClip audioSuccessful;
+	public AudioClip audiocongratulations;
+	public AudioClip audioPuedesHacerloMejor;
+
+	public AudioSource songPlayer;
+	public AudioSource incidentsPlayer;
+
 	
 	// Use this for initialization
 	void Start () {
@@ -71,19 +90,69 @@ public class SkeletonWrapperPlayer : MonoBehaviour {
 		//final transform matrix offsets the rotation of the kinect, then translates to a new center
 		kinectToWorld = flipMatrix*trans*rot;
 	}
+
+	private int countFrame = 0;
 	
 	// Update is called once per frame
 	void Update () {
-		
+		if (isPlaying) {
+			if (countFrame > 100) {
+				float percent = 100f;
+				bool passed = true;
+
+				try {
+					ReproductorArchivoLector movPlayer = (ReproductorArchivoLector)kinect;
+					NuiSkeletonData [] skeletonDataFactored = movPlayer.convertedSkeletonFactor ();
+					int length = (int)NuiSkeletonPositionIndex.Count;
+					int isInsideRegionCheck = 0;
+					for (int i = 0; i < length; i++) {
+						Vector4 positionKinect = i < kinectManager.skeletonFrame.SkeletonData.Length ? kinectManager.skeletonFrame.SkeletonData[i].Position : new Vector4(); 
+						Vector4 positionReproductor = i < skeletonDataFactored.Length ? skeletonDataFactored[i].Position : new Vector4();
+						isInsideRegionCheck += movPlayer.isInsideRegion((Vector3)positionKinect, (Vector3)positionReproductor, 20.0f) ? 1 : 0;
+						percent = ((isInsideRegionCheck / 20 ) * 100);
+					}
+				} catch (Exception exp) {
+				}
+
+				passed = percent > PERCENT_PASSED;
+
+				if (passed || canDoitBetter) {
+					//Positive Action
+					incidentsPlayer.clip = audioSuccessful;
+					Debug.Log("Positive");
+					
+				} else {
+					//Negative action
+					incidentsPlayer.clip = audioPuedesHacerloMejor;
+					Debug.Log("Negative");
+
+				}
+				incidentsPlayer.Play();
+				countFrame = 0;
+			} else {
+				countFrame++;
+			}
+		} else {
+			songPlayer.Stop();
+		}
 	}
 	
 	void LateUpdate () {
 		updatedSkeleton = false;
 		newSkeleton = false;
+		canDoitBetter = !canDoitBetter;
 	}
 
+	bool canDoitBetter = false;
+
 	public bool finalizoReproduccion() {
-		return ((ReproductorArchivoLector)kinect).finalizoReproduccion ();
+		try {
+			isPlaying = !((ReproductorArchivoLector)kinect).finalizoReproduccion (); 
+		} catch (Exception exp) {
+			isPlaying = false;
+		}
+
+		return !isPlaying;
 	}
 
 	

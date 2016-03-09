@@ -1,14 +1,17 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="assets\KinectScripts\KinectManager.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="assets\assets\General Scripts\ReproductorLectorArchivo.cs">
     <Files>
-      <File FileName="assets\KinectScripts\KinectManager.cs" Line="1095" Column="4" />
-      <File FileName="assets\KinectScripts\Samples\MouseControl.cs" Line="1" Column="1" />
-      <File FileName="assets\assets\menu\Scripts Menu\EscenarioInicial.cs" Line="57" Column="19" />
-      <File FileName="assets\KinectScripts\KinectGestures.cs" Line="8" Column="43" />
-      <File FileName="assets\GesturesDemo\Scripts\GestureListener.cs" Line="47" Column="23" />
-      <File FileName="assets\assets\menu\Scripts Menu\EjecucionRutina.cs" Line="1" Column="1" />
-      <File FileName="assets\KinectScripts\Samples\SimpleGestureListener.cs" Line="48" Column="67" />
+      <File FileName="assets\assets\General Scripts\ReproductorLectorArchivo.cs" Line="157" Column="21" />
+      <File FileName="assets\assets\General Scripts\ReproduccionManager.cs" Line="1" Column="1" />
+      <File FileName="assets\assets\General Scripts\ReproduccionMovimiento.cs" Line="1" Column="1" />
+      <File FileName="assets\KinectScripts\KinectWrapper.cs" Line="1" Column="1" />
+      <File FileName="assets\assets\General Scripts\GrabadorMovimiento.cs" Line="1" Column="1" />
+      <File FileName="assets\assets\General Scripts\ReproductorMovimiento.cs" Line="1" Column="1" />
+      <File FileName="assets\assets\General Scripts\SkeletonWrapperPlayer.cs" Line="1" Column="1" />
+      <File FileName="assets\assets\menu\Scripts Menu\EscenarioInicial.cs" Line="1" Column="1" />
+      <File FileName="assets\assets\General Scripts\GrabacionManager.cs" Line="1" Column="1" />
+      <File FileName="assets\assets\menu\Scripts Menu\EscenarioSeleccionarTipoRutina.cs" Line="1" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

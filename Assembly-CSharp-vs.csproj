@@ -85,6 +85,7 @@
      <Compile Include="assets\Script\Kinect\KinectWrapper\SkeletonWrapper.cs" />
      <Compile Include="assets\SonidoPuntuacion.cs" />
      <Compile Include="assets\assets\General Scripts\AmbienteSonoro.cs" />
+     <Compile Include="assets\assets\General Scripts\AndyMovement.cs" />
      <Compile Include="assets\assets\General Scripts\Articulacion.cs" />
      <Compile Include="assets\assets\General Scripts\Aviso.cs" />
      <Compile Include="assets\assets\General Scripts\CalificacionMovimiento.cs" />
@@ -94,15 +95,24 @@
      <Compile Include="assets\assets\General Scripts\Creditos.cs" />
      <Compile Include="assets\assets\General Scripts\Cronometro.cs" />
      <Compile Include="assets\assets\General Scripts\EvaluacionRutina.cs" />
+     <Compile Include="assets\assets\General Scripts\GrabacionManager.cs" />
+     <Compile Include="assets\assets\General Scripts\GrabadorMovimiento.cs" />
      <Compile Include="assets\assets\General Scripts\Imagen.cs" />
      <Compile Include="assets\assets\General Scripts\InstruccionVisual.cs" />
      <Compile Include="assets\assets\General Scripts\Modelo.cs" />
      <Compile Include="assets\assets\General Scripts\Motor.cs" />
      <Compile Include="assets\assets\General Scripts\Movimiento.cs" />
      <Compile Include="assets\assets\General Scripts\Prinicipal.cs" />
+     <Compile Include="assets\assets\General Scripts\ReproduccionArchivoFuente.cs" />
+     <Compile Include="assets\assets\General Scripts\ReproduccionManager.cs" />
+     <Compile Include="assets\assets\General Scripts\ReproduccionMovimiento.cs" />
+     <Compile Include="assets\assets\General Scripts\ReproductorAvatar.cs" />
+     <Compile Include="assets\assets\General Scripts\ReproductorLectorArchivo.cs" />
+     <Compile Include="assets\assets\General Scripts\ReproductorMovimiento.cs" />
      <Compile Include="assets\assets\General Scripts\Rubrica.cs" />
      <Compile Include="assets\assets\General Scripts\RubricaRutina.cs" />
      <Compile Include="assets\assets\General Scripts\SeleccionMusical.cs" />
+     <Compile Include="assets\assets\General Scripts\SkeletonWrapperPlayer.cs" />
      <Compile Include="assets\assets\menu\Scripts Menu\EjecucionRutina.cs" />
      <Compile Include="assets\assets\menu\Scripts Menu\EscenarioInicial.cs" />
      <Compile Include="assets\assets\menu\Scripts Menu\EscenarioRutinaAutomatica.cs" />
@@ -136,12 +146,19 @@
  <Reference Include="UnityEngine.UI">
  <HintPath>C:/Program Files (x86)/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/4.6.2/UnityEngine.UI.dll</HintPath>
  </Reference>
+ <Reference Include="ICSharpCode.SharpZipLib">
+ <HintPath>C:/Users/gbonilla/Documents/Universidad/seminario 1/Proyecto de Investigacion/Baila_Conmigo/Baila Conmigo/Producto desarrollado/BCI/baila conmigo/Assets/plugins/ICSharpCode.SharpZipLib.dll</HintPath>
+ </Reference>
  <Reference Include="OpenNI.Net">
  <HintPath>C:/Users/gbonilla/Documents/Universidad/seminario 1/Proyecto de Investigacion/Baila_Conmigo/Baila Conmigo/Producto desarrollado/BCI/baila conmigo/Assets/zigfu/scripts/_Internal/OpenNI.Net.dll</HintPath>
  </Reference>
  <Reference Include="ZDK">
  <HintPath>C:/Users/gbonilla/Documents/Universidad/seminario 1/Proyecto de Investigacion/Baila_Conmigo/Baila Conmigo/Producto desarrollado/BCI/baila conmigo/Assets/zigfu/scripts/_Internal/ZDK.dll</HintPath>
  </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="Assembly-CSharp-firstpass-vs.csproj">
+      <Project>{23E8BCFF-8FBA-57E6-E168-BBC5D041416D}</Project>      <Name>Assembly-CSharp-firstpass-vs</Name>    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

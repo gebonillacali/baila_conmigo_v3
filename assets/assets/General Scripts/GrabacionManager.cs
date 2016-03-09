@@ -40,9 +40,15 @@ public class GrabacionManager : MonoBehaviour, GrabadorMovimiento.GrabacionStatu
 		GUIStyle textFileldsStyle = new GUIStyle(GUI.skin.textField);
 		textFileldsStyle.fontSize = 20;
 
+		GUIStyle labelsStyleTitle = new GUIStyle(GUI.skin.label);
+		labelsStyleTitle.fontSize = 35;
+		labelsStyleTitle.fontStyle = FontStyle.Bold;
+		GUI.Label(new Rect(440,50,600,bH),"Grabacion de Rutinas FNP", labelsStyleTitle);
+
 		GUI.BeginGroup(new Rect (((Screen.width/2)- (gW/2)),((Screen.height/2)-(gW/2)), gW, GH));
 		if (!grabadorMovimiento.isRecording ()) {
-			if (GUI.Button (new Rect (0, 0, bW, bH), "Iniciar Grabacion", buttonsStyle)) {
+
+			if (GUI.Button (new Rect (0, 120, bW, bH), "Iniciar Grabacion", buttonsStyle)) {
 					grabadorMovimiento.StartRecord ();
 			}		
 		} else {
