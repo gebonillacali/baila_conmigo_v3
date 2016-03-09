@@ -16,7 +16,7 @@ public class GrabacionManager : MonoBehaviour, GrabadorMovimiento.GrabacionStatu
 	private int bW = 200;
 	private int bH = 50;
 	private int gW = 200;
-	private int GH = 170;
+	private int GH = 260;
 
 	private GrabadorMovimiento grabadorMovimiento;
 	private string nombreRutina = "";
@@ -31,6 +31,10 @@ public class GrabacionManager : MonoBehaviour, GrabadorMovimiento.GrabacionStatu
 	}
 	
 	void OnGUI () {
+		Debug.Log (Application.loadedLevelName);
+		if (Application.loadedLevelName != "3.EscenarioInterfazdeGrabacion") {
+			return;
+		}
 		GUIStyle buttonsStyle = new GUIStyle(GUI.skin.button);
 		buttonsStyle.fontSize = 20;
 
@@ -50,7 +54,10 @@ public class GrabacionManager : MonoBehaviour, GrabadorMovimiento.GrabacionStatu
 
 			if (GUI.Button (new Rect (0, 120, bW, bH), "Iniciar Grabacion", buttonsStyle)) {
 					grabadorMovimiento.StartRecord ();
-			}		
+			}
+			if (GUI.Button (new Rect (0, 200, bW, bH), "Volver", buttonsStyle)) {
+				Application.LoadLevel("ok");
+			}
 		} else {
 			if (grabadorMovimiento.isWaitingForRoutineName()) {
 				GUI.Label(new Rect (0, 0, bW, bH), "Ingrese el nombre de la rutina", labelsStyle);
