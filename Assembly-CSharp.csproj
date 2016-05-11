@@ -49,6 +49,8 @@
      <Compile Include="assets\DepthColliderDemo\Scripts\DepthImageViewer.cs" />
      <Compile Include="assets\DepthColliderDemo\Scripts\EggMover.cs" />
      <Compile Include="assets\DepthColliderDemo\Scripts\EggSpawner.cs" />
+     <Compile Include="assets\FileBrowser\Script\FileBrowser.cs" />
+     <Compile Include="assets\FileBrowser\Script\testFileBrowser.cs" />
      <Compile Include="assets\GesturesDemo\Scripts\GestureListener.cs" />
      <Compile Include="assets\GesturesDemo\Scripts\PresentationScript.cs" />
      <Compile Include="assets\KinectScripts\AvatarController.cs" />
@@ -85,8 +87,8 @@
      <Compile Include="assets\Script\Kinect\KinectWrapper\SkeletonWrapper.cs" />
      <Compile Include="assets\SonidoPuntuacion.cs" />
      <Compile Include="assets\assets\General Scripts\AmbienteSonoro.cs" />
-     <Compile Include="assets\assets\General Scripts\AndyMovement.cs" />
      <Compile Include="assets\assets\General Scripts\Articulacion.cs" />
+     <Compile Include="assets\assets\General Scripts\AudioMp3Manager.cs" />
      <Compile Include="assets\assets\General Scripts\Aviso.cs" />
      <Compile Include="assets\assets\General Scripts\CalificacionMovimiento.cs" />
      <Compile Include="assets\assets\General Scripts\Cancion.cs" />
@@ -95,6 +97,7 @@
      <Compile Include="assets\assets\General Scripts\Creditos.cs" />
      <Compile Include="assets\assets\General Scripts\Cronometro.cs" />
      <Compile Include="assets\assets\General Scripts\EvaluacionRutina.cs" />
+     <Compile Include="assets\assets\General Scripts\FrameRateManager.cs" />
      <Compile Include="assets\assets\General Scripts\GrabacionManager.cs" />
      <Compile Include="assets\assets\General Scripts\GrabadorMovimiento.cs" />
      <Compile Include="assets\assets\General Scripts\Imagen.cs" />
@@ -102,6 +105,7 @@
      <Compile Include="assets\assets\General Scripts\Modelo.cs" />
      <Compile Include="assets\assets\General Scripts\Motor.cs" />
      <Compile Include="assets\assets\General Scripts\Movimiento.cs" />
+     <Compile Include="assets\assets\General Scripts\MovimientoFrameRange.cs" />
      <Compile Include="assets\assets\General Scripts\Prinicipal.cs" />
      <Compile Include="assets\assets\General Scripts\ReproduccionArchivoFuente.cs" />
      <Compile Include="assets\assets\General Scripts\ReproduccionManager.cs" />
@@ -111,7 +115,9 @@
      <Compile Include="assets\assets\General Scripts\ReproductorMovimiento.cs" />
      <Compile Include="assets\assets\General Scripts\Rubrica.cs" />
      <Compile Include="assets\assets\General Scripts\RubricaRutina.cs" />
+     <Compile Include="assets\assets\General Scripts\ScreenUtil.cs" />
      <Compile Include="assets\assets\General Scripts\SeleccionMusical.cs" />
+     <Compile Include="assets\assets\General Scripts\SessionJuego.cs" />
      <Compile Include="assets\assets\General Scripts\SkeletonWrapperPlayer.cs" />
      <Compile Include="assets\assets\menu\Scripts Menu\EjecucionRutina.cs" />
      <Compile Include="assets\assets\menu\Scripts Menu\EscenarioInicial.cs" />
@@ -142,9 +148,16 @@
      <Compile Include="assets\zigfu\scripts\_Internal\Matrix3.cs" />
      <Compile Include="assets\zigfu\scripts\_Internal\TimedBuffer.cs" />
      <Compile Include="assets\zigfu\scripts\_Internal\kinectSpecific.cs" />
+     <None Include="assets\FileBrowser\readme.txt" />
      <None Include="assets\Asset\Shaders\Normal-Diffuse.shader" />
  <Reference Include="UnityEngine.UI">
  <HintPath>C:/Program Files (x86)/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/4.6.2/UnityEngine.UI.dll</HintPath>
+ </Reference>
+ <Reference Include="NAudio">
+ <HintPath>C:/Users/gbonilla/Documents/Universidad/seminario 1/Proyecto de Investigacion/Baila_Conmigo/Baila Conmigo/Producto desarrollado/BCI/baila conmigo/Assets/NAudio.dll</HintPath>
+ </Reference>
+ <Reference Include="NAudio.WindowsMediaFormat">
+ <HintPath>C:/Users/gbonilla/Documents/Universidad/seminario 1/Proyecto de Investigacion/Baila_Conmigo/Baila Conmigo/Producto desarrollado/BCI/baila conmigo/Assets/NAudio.WindowsMediaFormat.dll</HintPath>
  </Reference>
  <Reference Include="ICSharpCode.SharpZipLib">
  <HintPath>C:/Users/gbonilla/Documents/Universidad/seminario 1/Proyecto de Investigacion/Baila_Conmigo/Baila Conmigo/Producto desarrollado/BCI/baila conmigo/Assets/plugins/ICSharpCode.SharpZipLib.dll</HintPath>

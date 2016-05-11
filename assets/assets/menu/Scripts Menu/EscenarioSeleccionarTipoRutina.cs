@@ -16,16 +16,16 @@ public class EscenarioSeleccionarTipoRutina : MonoBehaviour {
 	void OnGUI (){
 
 		GUIStyle buttonsStyle = new GUIStyle(GUI.skin.button);
-		buttonsStyle.fontSize = 20;
+		buttonsStyle.fontSize = ScreenUtil.getFontFixedSize(20);
 		
 		GUIStyle labelsStyle = new GUIStyle(GUI.skin.label);
-		labelsStyle.fontSize = 20;
+		labelsStyle.fontSize = ScreenUtil.getFontFixedSize(20);
 		
 		GUIStyle textFileldsStyle = new GUIStyle(GUI.skin.textField);
-		textFileldsStyle.fontSize = 20;
+		textFileldsStyle.fontSize = ScreenUtil.getFontFixedSize(20);
 
 		GUIStyle boxStyle = new GUIStyle(GUI.skin.box);
-		boxStyle.fontSize = 25;
+		boxStyle.fontSize = ScreenUtil.getFontFixedSize(25);
 		boxStyle.fontStyle = FontStyle.Bold;
 
 		if (paused ){
@@ -36,6 +36,7 @@ public class EscenarioSeleccionarTipoRutina : MonoBehaviour {
 			{
 				limpiar.Clear();
 				Application.LoadLevel("ok");
+				KinectWrapper.NuiShutdown();
 				
 			}
 			if(GUI.Button(new Rect(0,120,bW,bH),"Salir Del Juego")){
@@ -45,26 +46,36 @@ public class EscenarioSeleccionarTipoRutina : MonoBehaviour {
 			GUI.EndGroup();
 		}
 
-		GUI.Box(new Rect(440,150,500,400), "Opciones de Reproduccion", boxStyle);
+		GUI.Box(ScreenUtil.getPosElement(new Rect(440,150,500,400)), "Opciones de Reproduccion", boxStyle);
 
-		if(GUI.Button(new Rect(515,200,350,50), "Manual", buttonsStyle)) {
+		if(GUI.Button(ScreenUtil.getPosElement(new Rect(515,200,350,50)), "Manual", buttonsStyle)) {
 			Application.LoadLevel("ok2");
+			KinectWrapper.NuiShutdown();
 		}
 		
-		if(GUI.Button(new Rect(515,270,350,50), "Automatico", buttonsStyle)) {
-			Application.LoadLevel("ok4");
+		if (GUI.Button (ScreenUtil.getPosElement (new Rect (515, 270, 350, 50)), "Automatico", buttonsStyle)) {
+						Application.LoadLevel ("ok4");
+						KinectWrapper.NuiShutdown ();
+		} else {
+			if (ScreenUtil.onMouseOver(ScreenUtil.getPosElement (new Rect (515, 270, 350, 50)))) {
+				MouseControl.MouseMoveToPoint(ScreenUtil.getPosElement (new Rect (515, 270, 350, 50)).center);
+			}
 		}
 
-		if(GUI.Button(new Rect(515,340,350,50), "Cambiar de jugador", buttonsStyle)) {
+		if(GUI.Button(ScreenUtil.getPosElement(new Rect(515,340,350,50)), "Cambiar de jugador", buttonsStyle)) {
 			Application.LoadLevel("ok");
+			KinectWrapper.NuiShutdown();
 		}
 
-		if(GUI.Button (new Rect (515,410,350,50), "Reproduccion de rutinas Creadas", buttonsStyle)){
+		if(GUI.Button (ScreenUtil.getPosElement(new Rect (515,410,350,50)), "Reproduccion de rutinas Creadas", buttonsStyle)){
 			Application.LoadLevel("4.EscenarioInterfazdeReproduccion");
+			KinectWrapper.NuiShutdown();
 		}
 
-		if(GUI.Button(new Rect(515,480,350,50),"Volver", buttonsStyle)){			
+
+		if(GUI.Button(ScreenUtil.getPosElement(new Rect(515,480,350,50)),"Volver", buttonsStyle)){			
 			Application.LoadLevel("ok");
+			KinectWrapper.NuiShutdown();
 		}
 		
 		

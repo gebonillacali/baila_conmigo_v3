@@ -27,12 +27,13 @@ public class GrabadorMovimiento {
 	private static string ext = ".bcm";
 	private bool recording = false;
 	private bool waitingForRoutineName = false;
+	private int countDown = 4;
 	private List<KinectWrapper.NuiSkeletonFrame> currentData = new List<KinectWrapper.NuiSkeletonFrame>();
 	private string nameGrabador = "movement";
-	private int fileCount;
 	private KinectManager kinectManager;
 	private GrabacionStatus grabacionStatusObj;
 	private bool isConverterRequired = true;
+	private int frameAllow = 0;
 
 	/// <summary>
 	/// Inicializa una nueva instancia de la clase <see cref="GrabadorMovimiento"/>.
@@ -49,6 +50,7 @@ public class GrabadorMovimiento {
 	/// </summary>
 	public void StartRecord() {
 		waitingForRoutineName = true;
+		countDown = 4;
 		recording = true;
 		Debug.Log("start recording");
 		currentData = new List<KinectWrapper.NuiSkeletonFrame>();;
@@ -70,6 +72,14 @@ public class GrabadorMovimiento {
 		return waitingForRoutineName;
 	}
 
+	public int getCountDown() {
+		return countDown;
+	}
+
+	public void setCountDown(int count) {
+		this.countDown = count;
+	}
+
 	/// <summary>
 	/// Establece el nombre de la rutina a grabarse.
 	/// </summary>
@@ -83,14 +93,22 @@ public class GrabadorMovimiento {
 	/// Graba cada frame de movimiento que se captura con el Kinect
 	/// </summary>
 	public string record() {
-		string recordMessage = "";
-		//if (KinectWrapper.PollSkeleton (ref kinectManager.smoothParameters, ref kinectManager.skeletonFrame, false)) {                
-		//if (kinectManager.skeletonFrame != null) {                
-			currentData.Add (kinectManager.skeletonFrame);
-			recordMessage = "Obteniendo... ";
-		//}
+		string recordMessage = "FramingNotAllow";
+		if (frameAllow > 1) {
+			frameAllow=0;
+			if (KinectWrapper.PollSkeleton (ref kinectManager.smoothParameters, ref kinectManager.skeletonFrame, false)) {                
+				             
+					currentData.Add (kinectManager.skeletonFrame);
+					recordMessage = "Obteniendo... ";
+
+				
+			}
+		} else {
+			frameAllow++;
+		}
 		return recordMessage;
 	}
+
 
 	/// <summary>
 	/// Para la grabacion de la rutina, 

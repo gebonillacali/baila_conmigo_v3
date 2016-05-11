@@ -100,7 +100,7 @@ public class KinectManager : MonoBehaviour
 	public GUIText GesturesDebugText;
 
 	public GUIText percentClick;
-	
+	public bool gestureActive=true;
 
 	// Bool to keep track of whether Kinect has been initialized
 	private bool KinectInitialized = false; 
@@ -177,7 +177,7 @@ public class KinectManager : MonoBehaviour
 	public List<KinectGestures.GestureListenerInterface> gestureListeners;
 	
 	private Matrix4x4 kinectToWorld, flipMatrix;
-	public static KinectManager instance;
+	private static KinectManager instance;
 	
     // Timer for controlling Filter Lerp blends.
     private float lastNuiTime;
@@ -188,8 +188,12 @@ public class KinectManager : MonoBehaviour
 	private ClippedLegsFilter[] clippedLegsFilter;
 	private BoneOrientationsConstraint boneConstraintsFilter;
 	private SelfIntersectionConstraint selfIntersectionConstraint;
-	
-	
+	public GestureListenerExecute gestureListenerExecutor = null;
+
+	public interface GestureListenerExecute {
+		void gestureComplete (KinectGestures.Gestures gesture);
+	}
+
 	// returns the single KinectManager instance
     public static KinectManager Instance
     {
@@ -874,7 +878,7 @@ public class KinectManager : MonoBehaviour
 				(ComputeColorMap ? KinectWrapper.NuiInitializeFlags.UsesColor : 0));
             if (hr != 0)
 			{
-            	throw new Exception("NuiInitialize Failed");
+            	throw new Exception("Hay un Fallo en la inicializacion del Kinect");
 			}
 			
 			hr = KinectWrapper.NuiSkeletonTrackingEnable(IntPtr.Zero, 8);  // 0, 12,8
@@ -1000,13 +1004,14 @@ public class KinectManager : MonoBehaviour
 			flipMatrix[2, 2] = -1;
 			
 			instance = this;
-			DontDestroyOnLoad(gameObject);
+			//DontDestroyOnLoad(gameObject);
 		}
 		catch(DllNotFoundException e)
 		{
-			string message = "Por Favor compruebe la instalacion del SDK del Kinect.";
-			Debug.LogError(message);
-			Debug.LogError(e.ToString());
+			string error = e.Message;
+			string message = "Por Favor compruebe la instalacion del SDK del Kinect." + error;
+			//Debug.LogError(message);
+			//Debug.LogError(e.ToString());
 			if(CalibrationText != null)
 				CalibrationText.guiText.text = message;
 				
@@ -1015,8 +1020,8 @@ public class KinectManager : MonoBehaviour
 		catch (Exception e)
 		{
 			string message = e.Message + " - " + KinectWrapper.GetNuiErrorString(hr);
-			Debug.LogError(message);
-			Debug.LogError(e.ToString());
+			//Debug.LogError(message);
+			//Debug.LogError(e.ToString());
 			if(CalibrationText != null)
 				CalibrationText.guiText.text = message;
 				
@@ -1122,7 +1127,7 @@ public class KinectManager : MonoBehaviour
 
 		}
 		
-		Debug.Log("Waiting for users.");
+		//Debug.Log("Waiting for users.");
 			
 		KinectInitialized = true;
 	}
@@ -1165,10 +1170,12 @@ public class KinectManager : MonoBehaviour
 					UpdateColorMap();
 				}
 			}
-			
+
 			if(KinectWrapper.PollSkeleton(ref smoothParameters, ref skeletonFrame, false))
 			{
 				ProcessSkeleton();
+			} else {
+				//Debug.Log("No processing skeleton" + this.GetInstanceID());
 			}
 			
 			// Update player 1's models if he/she is calibrated and the model is active.
@@ -1185,7 +1192,7 @@ public class KinectManager : MonoBehaviour
 				// Check for complete gestures
 				foreach(KinectGestures.GestureData gestureData in player1Gestures)
 				{
-					if(gestureData.complete)
+					if(gestureData.complete && gestureActive)
 					{
 						if(gestureData.gesture == KinectGestures.Gestures.Click)
 						{
@@ -1194,25 +1201,31 @@ public class KinectManager : MonoBehaviour
 								MouseControl.MouseClick();
 								ResetPlayerGestures(Player1ID);
 							}
-						} else
+						} else 
 
 						if(gestureData.gesture == KinectGestures.Gestures.Push)
 						{
-							Debug.Log("Push");
 							ResetPlayerGestures(Player1ID);
-						}
+						} else
 
 						if(gestureData.gesture == KinectGestures.Gestures.SwipeDown) {
 							if(EscenarioInicial.initiated) {
 								EscenarioInicial.scrollControl(50);
 							}
-						}
+						} else
 
 						if(gestureData.gesture == KinectGestures.Gestures.SwipeUp) {
 							if(EscenarioInicial.initiated) {
 								EscenarioInicial.scrollControl(-50);
 							}
+						} else
+
+						if(gestureData.gesture == KinectGestures.Gestures.Jump) {
+							if(gestureListenerExecutor != null) {
+								gestureListenerExecutor.gestureComplete(KinectGestures.Gestures.Jump);
+							}
 						}
+
 						foreach(KinectGestures.GestureListenerInterface listener in gestureListeners)
 						{
 							if(listener.GestureCompleted(Player1ID, 0, gestureData.gesture, 
@@ -1680,12 +1693,10 @@ public class KinectManager : MonoBehaviour
 		if(AllPlayersCalibrated)
 		{
 
-			Debug.Log("All players calibrated.");
+			//Debug.Log("All players calibrated.");
 			
 			if(CalibrationText != null)
 			{
-				Screen.showCursor = false;
-				Screen.showCursor = false;
 				CalibrationText.guiText.text = "Jugador Calibrado Exitosamente";
 				if(HandCursor1 != null && !EjecucionRutina.initiated) {
 					HandCursor1.guiTexture.enabled = true;
@@ -1752,7 +1763,7 @@ public class KinectManager : MonoBehaviour
 		AllPlayersCalibrated = !TwoUsers ? allUsers.Count >= 1 : allUsers.Count >= 2; // false;
 		
 		// Try to replace that user!
-		Debug.Log("Waiting for users.");
+		//Debug.Log("Waiting for users.");
 		if (CalibrationText == null) {
 			CalibrationText = (GUIText) GameObject.Find("CalibrateText").GetComponent(typeof(GUIText));
 		}

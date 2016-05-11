@@ -1,24 +1,19 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="assets\assets\General Scripts\ReproductorLectorArchivo.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="assets\assets\General Scripts\ReproduccionManager.cs">
     <Files>
-      <File FileName="assets\assets\General Scripts\ReproductorLectorArchivo.cs" Line="157" Column="21" />
-      <File FileName="assets\assets\General Scripts\ReproduccionManager.cs" Line="1" Column="1" />
-      <File FileName="assets\assets\General Scripts\ReproduccionMovimiento.cs" Line="1" Column="1" />
-      <File FileName="assets\KinectScripts\KinectWrapper.cs" Line="1" Column="1" />
-      <File FileName="assets\assets\General Scripts\GrabadorMovimiento.cs" Line="1" Column="1" />
+      <File FileName="assets\assets\General Scripts\ReproduccionManager.cs" Line="283" Column="71" />
+      <File FileName="assets\assets\General Scripts\ReproductorLectorArchivo.cs" Line="98" Column="79" />
       <File FileName="assets\assets\General Scripts\ReproductorMovimiento.cs" Line="1" Column="1" />
-      <File FileName="assets\assets\General Scripts\SkeletonWrapperPlayer.cs" Line="1" Column="1" />
-      <File FileName="assets\assets\menu\Scripts Menu\EscenarioInicial.cs" Line="1" Column="1" />
-      <File FileName="assets\assets\General Scripts\GrabacionManager.cs" Line="1" Column="1" />
-      <File FileName="assets\assets\menu\Scripts Menu\EscenarioSeleccionarTipoRutina.cs" Line="1" Column="1" />
+      <File FileName="assets\assets\General Scripts\SkeletonWrapperPlayer.cs" Line="147" Column="103" />
+      <File FileName="assets\assets\General Scripts\GrabadorMovimiento.cs" Line="1" Column="1" />
+      <File FileName="assets\assets\General Scripts\FrameRateManager.cs" Line="1" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
-    <BreakpointStore>
-      <Breakpoint file="C:\Users\gbonilla\Documents\Universidad\seminario 1\Proyecto de Investigacion\Baila_Conmigo\Baila Conmigo\Producto desarrollado\BCI\baila conmigo\assets\KinectScripts\KinectManager.cs" line="554" />
-      <Breakpoint file="C:\Users\gbonilla\Documents\Universidad\seminario 1\Proyecto de Investigacion\Baila_Conmigo\Baila Conmigo\Producto desarrollado\BCI\baila conmigo\assets\KinectScripts\KinectManager.cs" line="528" />
-    </BreakpointStore>
+    <BreakpointStore />
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
-  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches>
+    <Watch file="assets\assets\General Scripts\SkeletonWrapperPlayer.cs" line="129" offsetX="821" offsetY="2176" expression="skeletonDataFactored.SkeletonPositions" liveUpdate="False" />
+  </MonoDevelop.Ide.DebuggingService.PinnedWatches>
 </Properties>

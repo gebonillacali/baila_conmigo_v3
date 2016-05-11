@@ -48,28 +48,31 @@ public class EscenarioRutinaAutomatica : MonoBehaviour {
 
 
 	//Top Left Button
-		if (GUI.Toggle ( new Rect(250,250,100,100), bt1, "Rutina 1")) bt1 = setMeOnly();
+		if (GUI.Toggle (ScreenUtil.getPosElement(new Rect(250,250,100,100)), bt1, "Rutina 1")) bt1 = setMeOnly();
 		
 		//Middle Button
-		if (GUI.Toggle ( new Rect(450,250,100,100), bt2, "Rutina 2")) bt2 = setMeOnly();
+		if (GUI.Toggle ( ScreenUtil.getPosElement(new Rect(450,250,100,100)), bt2, "Rutina 2")) bt2 = setMeOnly();
 		
 		//Bottom Right Button
-		if (GUI.Toggle ( new Rect(650,250,100,100), bt3, "Rutina 3")) bt3 = setMeOnly();
+		if (GUI.Toggle ( ScreenUtil.getPosElement(new Rect(650,250,100,100)), bt3, "Rutina 3")) bt3 = setMeOnly();
 				
-		if (GUI.Toggle ( new Rect(850,250,100,100), bt4, "Rutina4")) bt4 = setMeOnly();
+		if (GUI.Toggle ( ScreenUtil.getPosElement(new Rect(850,250,100,100)), bt4, "Rutina4")) bt4 = setMeOnly();
 		
-		if(GUI.Button (new Rect (520,350,100,35), "Aceptar")){
+		if(GUI.Button (ScreenUtil.getPosElement(new Rect (520,350,100,35)), "Aceptar")){
 			rutinaAutomatica = true;
 			Application.LoadLevel("1.EscenarioPrincipal1");
+			KinectWrapper.NuiShutdown();
 		}
-		if(GUI.Button(new Rect(1150,500,50,40),"Salir")){
+		if(GUI.Button(ScreenUtil.getPosElement(new Rect(1150,500,50,40)),"Salir")){
 			Application.Quit();
 		}
-		if(GUI.Button(new Rect(1000,450,200,40), "Cambiar tipo de rutina")) {
+		if(GUI.Button(ScreenUtil.getPosElement(new Rect(1000,450,200,40)), "Cambiar tipo de rutina")) {
 			Application.LoadLevel("ok3");
+			KinectWrapper.NuiShutdown();
 		}
-		if(GUI.Button(new Rect(1000,400,200,40), "Cambiar de jugador")) {
+		if(GUI.Button(ScreenUtil.getPosElement(new Rect(1000,400,200,40)), "Cambiar de jugador")) {
 			Application.LoadLevel("ok");
+			KinectWrapper.NuiShutdown();
 		}
 	}
 

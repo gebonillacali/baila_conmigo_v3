@@ -2,7 +2,12 @@
 using UnityEngine;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 
+/// <summary>
+/// Reproductor movimiento.
+/// Modelo que permite la reproduccion de Rutinas
+/// </summary>
 public class ReproductorMovimiento : MonoBehaviour {
 
 	/// <summary>
@@ -10,6 +15,14 @@ public class ReproductorMovimiento : MonoBehaviour {
 	/// </summary>
 	private string pathFile = "";
 	private bool playing = false;
+	private int stateGame = 0;
+
+	/// <summary>
+	/// Atributos publicos de configuracion para persistencia.
+	/// </summary>
+	public string urlIniciarJuego="openclassmedia.org/bailaconmigo/crearSesionJuego.php";
+	public string urlGrabarPuntaje="openclassmedia.org/bailaconmigo/puntaje_movimiento.php";
+	public string urlGrabarHistorico="openclassmedia.org/bailaconmigo/general.php";
 
 	//Assignments for a bitmask to control which bones to look at and which to ignore
 	public enum BoneMask
@@ -88,19 +101,43 @@ public class ReproductorMovimiento : MonoBehaviour {
 	private Vector3 _hipRight; //right vector of the hips
 	private Vector3 _chestRight; //right vectory of the chest
 
+	public ReproductorArchivoLector.ReproductorNotifier reproductorNotifier;
+	public ReproduccionActions actions;
+
+	public interface ReproduccionActions {
+		void juegoTerminado ();
+	}
 
 	public void setPathFile(string pathFile) {
-		this.pathFile = pathFile;
-		sw.setPathFile (pathFile);
-		playing = true;
+		if (!playing) {
+			playing = true;
+			sw.reproductorNotifier = this.reproductorNotifier;
+
+			iniciarSesionJuego ();
+			this.pathFile = pathFile;
+			sw.setPathFile (pathFile);
+			stateGame = 1;
+		}
 	}
-	
+
+	public bool isAllowedToPlay() {
+		return sw.allowToPlay;
+	}
+
+	public void setAllowToPlay(bool allowToPlay) {
+		sw.allowToPlay = allowToPlay;
+	}
+
 	public bool isPlaying() {
 		return playing;
 	}
 	
 	// Use this for initialization
 	void Start () {
+		setVisibility(false, gameObject);
+		sw.reproductorNotifier = this.reproductorNotifier;
+
+		stateGame = 0;
 
 		//store bones in a list for easier access, everything except Hip_Center will be one
 		//higher than the corresponding Kinect.NuiSkeletonPositionIndex (because of the hip_override)
@@ -176,12 +213,18 @@ public class ReproductorMovimiento : MonoBehaviour {
 		//make _hipRight orthogonal to the direction of the hip override
 		Vector3.OrthoNormalize(ref _boneDir[(int)Kinect.NuiSkeletonPositionIndex.HipLeft],ref _hipRight);
 	}
+
+	private bool isVisibleAvatar = false;
 	
 	void Update () {
 		//update the data from the kinect if necessary
-		if (isPlaying()) {
-			setVisibility(true);
-			playing = !sw.finalizoReproduccion();
+		if (!sw.finalizoReproduccion()) {
+			if (sw.allowToPlay && !isVisibleAvatar) {
+				setVisibility(true, gameObject);
+				isVisibleAvatar = true;
+			}
+			//setVisibility(true, sw.kinectManager.Player1Avatars[0]);
+
 			if(sw.pollSkeleton()){
 				for( int ii = 0; ii < (int)Kinect.NuiSkeletonPositionIndex.Count; ii++)
 				{
@@ -193,12 +236,131 @@ public class ReproductorMovimiento : MonoBehaviour {
 				}
 			}
 		} else {
-			setVisibility(false);
+			playing = false;
+			if (stateGame == 1) {
+				stateGame = 0;
+				if (!SessionJuego.isRutinaGenerada()) {
+					uploadPuntajeJugador();
+				} else {
+					uploadPuntajesMovimientosJugador();
+				}
+			}
+			if (isVisibleAvatar) {
+				setVisibility(false, gameObject);
+				isVisibleAvatar = false;
+			}
+			//setVisibility(false, sw.kinectManager.Player1Avatars[0]);
+
 		}
 
 	}
 
-	public void setVisibility(bool visible) {
+	private void iniciarSesionJuego() {
+		Debug.Log ("SessionJuego.getCodigoJugador():" + SessionJuego.getCodigoJugador ());
+		Debug.Log ("SessionJuego.getCodigoJugador():" + SessionJuego.getCodigoRutina());
+		var form= new WWWForm(); //here you create a new form connection
+		form.AddField( "Codigo",SessionJuego.getCodigoJugador());
+		form.AddField ("Cancion", "cancion 2");
+		form.AddField ("Cod_rutina", SessionJuego.getCodigoRutina().ToString());
+		WWW www = new WWW(urlIniciarJuego,form);
+		StartCoroutine(WaitForRequest(www));
+	}
+
+	IEnumerator WaitForRequest(WWW hs_get){
+		yield return hs_get;
+		string codigoSesion = hs_get.text != null ? hs_get.text : "0";
+		SessionJuego.setCodigoSesion (codigoSesion);
+		if(hs_get.error != null){
+			Debug.Log("ERROR: "+hs_get.error);
+		}
+		SessionJuego.setPuntajeJugador (0);
+		SessionJuego.setAcumuladoJugador(0f);
+	}
+
+	private void uploadPuntajeJugador() {
+
+		var form= new WWWForm(); //here you create a new form connection
+		form.AddField( "Puntaje",SessionJuego.getPuntajeJugador().ToString());
+		form.AddField ("Movimiento","19");
+		form.AddField ("Cod_sesion",SessionJuego.getCodigoSesion());
+		WWW www = new WWW(urlGrabarPuntaje,form);
+		StartCoroutine(WaitForRequestCommon(www));
+	}
+
+	int indexUploadPuntajesMov = 0;
+	List<MovimientoFrameRange> movimientoFrameRanges = new List<MovimientoFrameRange>();
+
+	private void prepareMovimientosForUpload() {
+		for (int i=0; i < SessionJuego.getMovimientoFrameRange().Count; i++) {
+			MovimientoFrameRange movIncoming = SessionJuego.getMovimientoFrameRange()[i];
+			if (movIncoming.Cod_movimiento.Length > 0) {
+				if (movimientoFrameRanges.Count > 0) {
+					int index = MovimientoFrameRange.getIndexByCodMovimiento(movimientoFrameRanges, movIncoming.Cod_movimiento);
+					if (index >= 0) {
+						movimientoFrameRanges[index].PuntajeMovimiento += movIncoming.PuntajeMovimiento;
+					} else {
+						movimientoFrameRanges.Add(movIncoming);
+					}
+				} else {
+					movimientoFrameRanges.Add(movIncoming);
+				}
+			}
+		}
+	}
+
+	private void uploadPuntajesMovimientosJugador() {
+
+		prepareMovimientosForUpload ();
+
+		if (indexUploadPuntajesMov < movimientoFrameRanges.Count) {
+			MovimientoFrameRange movimientoFrameRange = movimientoFrameRanges[indexUploadPuntajesMov];
+			var form= new WWWForm(); //here you create a new form connection
+			Debug.Log("Subiendo info de index " + indexUploadPuntajesMov + " cod:" + movimientoFrameRange.Cod_movimiento + " " + movimientoFrameRange.PuntajeMovimiento.ToString() + " Pts Session:" + SessionJuego.getCodigoSesion());
+			if (movimientoFrameRange.Cod_movimiento.Length <= 0) {
+				indexUploadPuntajesMov++;
+				uploadPuntajesMovimientosJugador();
+				return;
+			}
+			form.AddField( "Puntaje",movimientoFrameRange.PuntajeMovimiento.ToString());
+			form.AddField ("Movimiento",movimientoFrameRange.Cod_movimiento);
+			form.AddField ("Cod_sesion",SessionJuego.getCodigoSesion());
+			WWW www = new WWW(urlGrabarPuntaje,form);
+			StartCoroutine(WaitForRequestCommonMultiple(www));
+		} else {
+			indexUploadPuntajesMov = 0;
+			uploadHistorico();
+		}
+	}
+
+	private void uploadHistorico() {
+		var form= new WWWForm(); //here you create a new form connection
+		form.AddField( "Puntaje",SessionJuego.getAcumuladoJugador().ToString());
+		form.AddField ("Cod_nino",SessionJuego.getCodigoJugador());
+		form.AddField ("Cod_sesion",SessionJuego.getCodigoSesion());
+		WWW www = new WWW(urlGrabarHistorico,form);
+		StartCoroutine(WaitForRequestCommon(www));
+	}
+
+	IEnumerator WaitForRequestCommon(WWW hs_get){
+		yield return hs_get;
+		if (hs_get.url ==  urlGrabarPuntaje) {
+			uploadHistorico();
+		}
+
+		if (hs_get.url == urlGrabarHistorico) {
+			actions.juegoTerminado();
+		}
+
+	}
+
+	IEnumerator WaitForRequestCommonMultiple(WWW hs_get){
+		yield return hs_get;
+		Debug.Log ("info subida a " + hs_get.url + " insertado " + hs_get.text + " filas");
+		indexUploadPuntajesMov++;
+		uploadPuntajesMovimientosJugador ();
+	}
+
+	public void setVisibility(bool visible, GameObject gameObject) {
 		// toggles the visibility of this gameobject and all it's children
 		Renderer[] renderers = gameObject.GetComponentsInChildren<Renderer>();
 		foreach (Renderer r in renderers)

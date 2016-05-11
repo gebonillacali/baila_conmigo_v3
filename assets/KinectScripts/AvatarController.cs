@@ -242,7 +242,7 @@ public class AvatarController : MonoBehaviour
 		}
 		
 	}
-	
+
 	// Moves the avatar in 3D space - pulls the tracked position of the spine and applies it to root.
 	// Only pulls positional, not rotational.
 	protected void MoveAvatar(uint UserID)
@@ -317,7 +317,7 @@ public class AvatarController : MonoBehaviour
 				continue;
 			
 			bones[boneIndex] = animatorComponent.GetBoneTransform(boneIndex2MecanimMap[boneIndex]);
-			Debug.Log(bones[boneIndex].name + ":" + boneIndex);
+			//Debug.Log(bones[boneIndex].name + ":" + boneIndex);
 		}
 	}
 	

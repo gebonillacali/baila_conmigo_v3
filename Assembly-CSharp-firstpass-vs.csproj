@@ -47,9 +47,16 @@
   </ItemGroup>
   <ItemGroup>
      <Compile Include="assets\plugins\SimpleJSON.cs" />
+     <None Include="assets\FileBrowser\readme.txt" />
      <None Include="assets\Asset\Shaders\Normal-Diffuse.shader" />
  <Reference Include="UnityEngine.UI">
  <HintPath>C:/Program Files (x86)/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/4.6.2/UnityEngine.UI.dll</HintPath>
+ </Reference>
+ <Reference Include="NAudio">
+ <HintPath>C:/Users/gbonilla/Documents/Universidad/seminario 1/Proyecto de Investigacion/Baila_Conmigo/Baila Conmigo/Producto desarrollado/BCI/baila conmigo/Assets/NAudio.dll</HintPath>
+ </Reference>
+ <Reference Include="NAudio.WindowsMediaFormat">
+ <HintPath>C:/Users/gbonilla/Documents/Universidad/seminario 1/Proyecto de Investigacion/Baila_Conmigo/Baila Conmigo/Producto desarrollado/BCI/baila conmigo/Assets/NAudio.WindowsMediaFormat.dll</HintPath>
  </Reference>
  <Reference Include="ICSharpCode.SharpZipLib">
  <HintPath>C:/Users/gbonilla/Documents/Universidad/seminario 1/Proyecto de Investigacion/Baila_Conmigo/Baila Conmigo/Producto desarrollado/BCI/baila conmigo/Assets/plugins/ICSharpCode.SharpZipLib.dll</HintPath>
