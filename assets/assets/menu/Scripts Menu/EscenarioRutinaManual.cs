@@ -122,6 +122,7 @@ public class EscenarioRutinaManual : MonoBehaviour {
 
 				vaciarArr();
 				Application.LoadLevel("ok");
+				KinectWrapper.NuiShutdown();
 				
 			}
 			if(GUI.Button(new Rect(0,120,bW,bH),"Salir Del Juego")){
@@ -140,44 +141,47 @@ public class EscenarioRutinaManual : MonoBehaviour {
 		
 		// Boton jugar
 		
-		if(GUI.Button ( new Rect(1050,200,100,50), "Jugar")){
+		if(GUI.Button (ScreenUtil.getPosElement(new Rect(1050,200,100,50)), "Jugar")){
 			llenarArreglo();
 			seleccionarRutina();
 			Application.LoadLevel ("1.EscenarioPrincipal1");
+			KinectWrapper.NuiShutdown();
 			
 		}
-		if(GUI.Button(new Rect(1150,500,50,40),"Salir")){
+		if(GUI.Button(ScreenUtil.getPosElement(new Rect(1150,500,50,40)),"Salir")){
 			
 			Application.Quit();
 		}
-		if(GUI.Button(new Rect(1000,450,200,40), "Cambiar tipo de rutina")) {
+		if(GUI.Button(ScreenUtil.getPosElement(new Rect(1000,450,200,40)), "Cambiar tipo de rutina")) {
 			Application.LoadLevel("ok3");
+			KinectWrapper.NuiShutdown();
 		}
-		if(GUI.Button(new Rect(1000,400,200,40), "Cambiar de jugador")) {
+		if(GUI.Button(ScreenUtil.getPosElement(new Rect(1000,400,200,40)), "Cambiar de jugador")) {
 			Application.LoadLevel("ok");
+			KinectWrapper.NuiShutdown();
 		}
 		
-		scrollViewVector = GUI.BeginScrollView ( new Rect(100, 150, 200, 400), scrollViewVector,new  Rect (0, 0, 600, 600));
+		scrollViewVector = GUI.BeginScrollView ( ScreenUtil.getPosElement(new Rect(100, 150, 200, 400)), scrollViewVector,ScreenUtil.getPosElement(new  Rect (0, 0, 600, 600)));
 		
-		toggleBool = GUI.Toggle ( new Rect(0, 0, 100, 30), toggleBool, "Ejercicio 1");
+		toggleBool = GUI.Toggle ( ScreenUtil.getPosElement(new Rect(0, 0, 100, 30)), toggleBool, "Ejercicio 1");
 		
-		toggleBool1 = GUI.Toggle ( new Rect(0,100, 100, 30), toggleBool1, "Ejercicio 2");
+		toggleBool1 = GUI.Toggle ( ScreenUtil.getPosElement(new Rect(0,100, 100, 30)), toggleBool1, "Ejercicio 2");
 		
-		toggleBool2 = GUI.Toggle ( new Rect(0, 200, 100, 30), toggleBool2, "Ejercicio 3");
+		toggleBool2 = GUI.Toggle ( ScreenUtil.getPosElement(new Rect(0, 200, 100, 30)), toggleBool2, "Ejercicio 3");
 		
-		toggleBool3 = GUI.Toggle ( new Rect(0, 300, 100, 30), toggleBool3, "Ejercicio 4");
+		toggleBool3 = GUI.Toggle ( ScreenUtil.getPosElement(new Rect(0, 300, 100, 30)), toggleBool3, "Ejercicio 4");
 		
-		toggleBool4 = GUI.Toggle ( new Rect(0, 400, 100, 30), toggleBool4, "Ejercicio 5");
+		toggleBool4 = GUI.Toggle ( ScreenUtil.getPosElement(new Rect(0, 400, 100, 30)), toggleBool4, "Ejercicio 5");
 		
-		toggleBool5 = GUI.Toggle ( new Rect(0, 500, 100, 30), toggleBool5, "Ejercicio 6");
+		toggleBool5 = GUI.Toggle ( ScreenUtil.getPosElement(new Rect(0, 500, 100, 30)), toggleBool5, "Ejercicio 6");
 		
 		
-		GUI.Label ( new Rect(100,0,100,100), icon);
-		GUI.Label ( new Rect(100,100,100,100), icon2);
-		GUI.Label ( new Rect(100,200,100,100), icon3);
-		GUI.Label ( new Rect(100,300,100,100), icon4);
-		GUI.Label ( new Rect(100,400,100,100), icon5);
-		GUI.Label ( new Rect(100,500,100,100), icon6);
+		GUI.Label ( ScreenUtil.getPosElement(new Rect(100,0,100,100)), icon);
+		GUI.Label ( ScreenUtil.getPosElement(new Rect(100,100,100,100)), icon2);
+		GUI.Label ( ScreenUtil.getPosElement(new Rect(100,200,100,100)), icon3);
+		GUI.Label ( ScreenUtil.getPosElement(new Rect(100,300,100,100)), icon4);
+		GUI.Label ( ScreenUtil.getPosElement(new Rect(100,400,100,100)), icon5);
+		GUI.Label ( ScreenUtil.getPosElement(new Rect(100,500,100,100)), icon6);
 		
 		
 		/*	if(!textura1){
@@ -193,27 +197,27 @@ public class EscenarioRutinaManual : MonoBehaviour {
 		
 		
 		
-		scrollViewVector1 = GUI.BeginScrollView ( new Rect(400, 150, 200, 400), scrollViewVector1,new Rect (0, 0, 600, 600));
+		scrollViewVector1 = GUI.BeginScrollView ( ScreenUtil.getPosElement(new Rect(400, 150, 200, 400)), scrollViewVector1,ScreenUtil.getPosElement(new Rect (0, 0, 600, 600)));
 		
-		toggleBool6 = GUI.Toggle ( new Rect(0, 0, 100, 30), toggleBool6, "Ejercicio 7");
+		toggleBool6 = GUI.Toggle ( ScreenUtil.getPosElement(new Rect(0, 0, 100, 30)), toggleBool6, "Ejercicio 7");
 		
-		toggleBool7 = GUI.Toggle ( new Rect(0,100, 100, 30), toggleBool7, "Ejercicio 8");
+		toggleBool7 = GUI.Toggle ( ScreenUtil.getPosElement(new Rect(0,100, 100, 30)), toggleBool7, "Ejercicio 8");
 		
-		toggleBool8 = GUI.Toggle ( new Rect(0, 200, 100, 30), toggleBool8, "Ejercicio 9");
+		toggleBool8 = GUI.Toggle ( ScreenUtil.getPosElement(new Rect(0, 200, 100, 30)), toggleBool8, "Ejercicio 9");
 		
-		toggleBool9 = GUI.Toggle ( new Rect(0, 300, 100, 30), toggleBool9, "Ejercicio 10");
+		toggleBool9 = GUI.Toggle ( ScreenUtil.getPosElement(new Rect(0, 300, 100, 30)), toggleBool9, "Ejercicio 10");
 		
-		toggleBool10 = GUI.Toggle ( new Rect(0, 400, 100, 30), toggleBool10, "Ejercicio 11");
+		toggleBool10 = GUI.Toggle ( ScreenUtil.getPosElement(new Rect(0, 400, 100, 30)), toggleBool10, "Ejercicio 11");
 		
-		toggleBool11 = GUI.Toggle ( new Rect(0, 500, 100, 30), toggleBool11, "Ejercicio 12");
+		toggleBool11 = GUI.Toggle ( ScreenUtil.getPosElement(new Rect(0, 500, 100, 30)), toggleBool11, "Ejercicio 12");
 		
 		
-		GUI.Label ( new Rect(100,0,100,100), icon7);
-		GUI.Label ( new Rect(100,100,100,100), icon8);
-		GUI.Label ( new Rect(100,200,100,100), icon9);
-		GUI.Label ( new Rect(100,300,100,100), icon10);
-		GUI.Label ( new Rect(100,400,100,100), icon11);
-		GUI.Label ( new Rect(100,500,100,100), icon12);
+		GUI.Label ( ScreenUtil.getPosElement(new Rect(100,0,100,100)), icon7);
+		GUI.Label ( ScreenUtil.getPosElement(new Rect(100,100,100,100)), icon8);
+		GUI.Label ( ScreenUtil.getPosElement(new Rect(100,200,100,100)), icon9);
+		GUI.Label ( ScreenUtil.getPosElement(new Rect(100,300,100,100)), icon10);
+		GUI.Label ( ScreenUtil.getPosElement(new Rect(100,400,100,100)), icon11);
+		GUI.Label ( ScreenUtil.getPosElement(new Rect(100,500,100,100)), icon12);
 		
 		
 		
@@ -221,29 +225,29 @@ public class EscenarioRutinaManual : MonoBehaviour {
 		
 		
 		
-		scrollViewVector2 = GUI.BeginScrollView ( new Rect(700, 150, 200, 400), scrollViewVector2, new Rect (0, 0, 600, 600));
+		scrollViewVector2 = GUI.BeginScrollView ( ScreenUtil.getPosElement(new Rect(700, 150, 200, 400)), scrollViewVector2, ScreenUtil.getPosElement(new Rect (0, 0, 600, 600)));
 		
-		toggleBool12 = GUI.Toggle ( new Rect(0, 0, 100, 30), toggleBool12, "Ejercicio 13");
+		toggleBool12 = GUI.Toggle ( ScreenUtil.getPosElement(new Rect(0, 0, 100, 30)), toggleBool12, "Ejercicio 13");
 		
-		toggleBool13 = GUI.Toggle ( new Rect(0,100, 100, 30), toggleBool13, "Ejercicio 14");
+		toggleBool13 = GUI.Toggle ( ScreenUtil.getPosElement(new Rect(0,100, 100, 30)), toggleBool13, "Ejercicio 14");
 		
-		toggleBool14 = GUI.Toggle ( new Rect(0, 200, 100, 30), toggleBool14, "Ejercicio 15");
+		toggleBool14 = GUI.Toggle ( ScreenUtil.getPosElement(new Rect(0, 200, 100, 30)), toggleBool14, "Ejercicio 15");
 		
-		toggleBool15 = GUI.Toggle ( new Rect(0, 300, 100, 30), toggleBool15, "Ejercicio 16");
+		toggleBool15 = GUI.Toggle ( ScreenUtil.getPosElement(new Rect(0, 300, 100, 30)), toggleBool15, "Ejercicio 16");
 		
-		toggleBool16 = GUI.Toggle ( new Rect(0, 400, 100, 30), toggleBool16, "Ejercicio 17");
+		toggleBool16 = GUI.Toggle ( ScreenUtil.getPosElement(new Rect(0, 400, 100, 30)), toggleBool16, "Ejercicio 17");
 		
-		toggleBool17 = GUI.Toggle ( new Rect(0, 500, 100, 30), toggleBool17, "Ejercicio 18");
+		toggleBool17 = GUI.Toggle ( ScreenUtil.getPosElement(new Rect(0, 500, 100, 30)), toggleBool17, "Ejercicio 18");
 		
 		
 		
-		GUI.Label ( new Rect(100,0,100,100), icon13);
-		GUI.Label ( new Rect(100,100,100,100), icon14);
-		GUI.Label ( new Rect(100,200,100,100), icon15);
-		GUI.Label ( new Rect(100,300,100,100), icon16);
-		GUI.Label ( new Rect(100,400,100,100), icon17);
-		GUI.Label ( new Rect(100,500,100,100), icon18);
-		GUI.Label ( new Rect(100,600,100,100), icon19);
+		GUI.Label ( ScreenUtil.getPosElement(new Rect(100,0,100,100)), icon13);
+		GUI.Label ( ScreenUtil.getPosElement(new Rect(100,100,100,100)), icon14);
+		GUI.Label ( ScreenUtil.getPosElement(new Rect(100,200,100,100)), icon15);
+		GUI.Label ( ScreenUtil.getPosElement(new Rect(100,300,100,100)), icon16);
+		GUI.Label ( ScreenUtil.getPosElement(new Rect(100,400,100,100)), icon17);
+		GUI.Label ( ScreenUtil.getPosElement(new Rect(100,500,100,100)), icon18);
+		GUI.Label ( ScreenUtil.getPosElement(new Rect(100,600,100,100)), icon19);
 		
 		
 		

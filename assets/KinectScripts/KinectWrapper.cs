@@ -708,7 +708,7 @@ public class KinectWrapper
 				message = "Hardware feature is not available.";
 				break;
 			case (uint)NuiErrorCodes.DeviceNotConnected:
-				message = "Device is not connected.";
+				message = "El Dispositivo Kinect no esta conectado, revisa su conexion.";
 				break;
 			case (uint)NuiErrorCodes.DeviceNotReady:
 				message = "Device is not ready.";
@@ -905,9 +905,12 @@ public class KinectWrapper
 		} else {
 		
 		int hr = KinectWrapper.NuiSkeletonGetNextFrame(0, ref skeletonFrame);
+			//Debug.Log("hr:" + hr);
 		if(hr == 0)
 		{
 			newSkeleton = true;
+		} else {
+				//Debug.Log(GetNuiErrorString(hr));
 		}
 		
 		if(newSkeleton)

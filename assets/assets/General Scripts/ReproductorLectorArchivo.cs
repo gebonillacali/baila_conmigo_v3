@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Runtime.Serialization;
@@ -7,15 +8,19 @@ using System.Runtime.Serialization;
 using Kinect;
 using System;
 
-
+/// <summary>
+/// Reproductor archivo lector.
+/// Clase de Modelo que permite Leer un archivo de rutinas o movimientos
+/// Genera Rutinas a partir de movimientos
+/// Evalua movimientos guardados contra los reproducidos en tiempo real
+/// </summary>
 public class ReproductorArchivoLector : MonoBehaviour, Kinect.KinectInterface {
 	
 	private string inputFile = "";
-	private float playbackSpeed = 0.0333f;
 	private float timer = 0;
 	private bool isDefault = true;
 	private int frameCount = 0;
-	
+
 	/// <summary>
 	/// how high (in meters) off the ground is the sensor
 	/// </summary>
@@ -30,13 +35,14 @@ public class ReproductorArchivoLector : MonoBehaviour, Kinect.KinectInterface {
 	public Vector4 lookAt = new Vector4(0, 1, 0, 0);
 
 	public KinectManager kinectManager;
-	
+
 	/// <summary>
 	///variables used for updating and accessing depth data 
 	/// </summary>
 	private bool newSkeleton = false;
-	private int curFrame = 0;
+	public int curFrame = 0;
 	private NuiSkeletonFrame[] skeletonFrame;
+	public ReproductorNotifier reproductorNotifier;
 
 	/// <summary>
 	///variables used for updating and accessing depth data 
@@ -60,6 +66,13 @@ public class ReproductorArchivoLector : MonoBehaviour, Kinect.KinectInterface {
 	void Update () {
 
 	}
+
+	public interface ReproductorNotifier {
+		void rutinaCargada (int numFrames, List<MovimientoFrameRange> rangoMovimientos);
+		List<MovimientoFrameRange> getRangoMovimientos ();
+		bool isRutinaGenerada();
+
+	}
 	
 	// Update is called once per frame
 	void LateUpdate () {
@@ -73,21 +86,97 @@ public class ReproductorArchivoLector : MonoBehaviour, Kinect.KinectInterface {
 	}
 
 	public void LoadPlaybackFile()  {
+
+		if (inputFile.Contains (",")) {
+
+			LoadPlaybackMultipleFiles(inputFile.Split(','), 0, new List<NuiSkeletonFrame>(), new List<MovimientoFrameRange>());
+			return;
+		}
+
 		FileStream input = new FileStream(@inputFile, FileMode.Open);
 		BinaryFormatter bf = new BinaryFormatter();
 		SerialSkeletonFrame[] serialSkeleton = (SerialSkeletonFrame[])bf.Deserialize(input);
-		skeletonFrame = new NuiSkeletonFrame[serialSkeleton.Length];
-
-		for(int ii = 0; ii < serialSkeleton.Length; ii++){
-			float percent = (ii / skeletonFrame.Length) * 100;
-			skeletonFrame[ii] = serialSkeleton[ii].deserialize();
-			Debug.Log("Loaded " + percent + " %");
+		skeletonFrame = new NuiSkeletonFrame[serialSkeleton.Length * SessionJuego.getRepeticionesMovimientos()];
+		for (int repeticiones = 0 ; repeticiones < SessionJuego.getRepeticionesMovimientos(); repeticiones++) {
+			for(int ii = 0; ii < serialSkeleton.Length; ii++){
+				float percent = ((float)ii / (float)skeletonFrame.Length) * 100f;
+				skeletonFrame[(repeticiones*serialSkeleton.Length)+ii] = serialSkeleton[ii].deserialize();
+			}
 		}
 		input.Close();
 		timer = 0;
 		curFrame = 0;
 		frameCount = 0;
-		Debug.Log("Simulating "+@inputFile + " frames loaded " + skeletonFrame.Length);
+		List<MovimientoFrameRange> movimientoFrameRanges = new List<MovimientoFrameRange> ();
+		MovimientoFrameRange movimientoFrameRange = new MovimientoFrameRange ();
+		movimientoFrameRange.InitFrame = 0;
+		movimientoFrameRange.EndFrame = skeletonFrame.Length * SessionJuego.getRepeticionesMovimientos();
+		movimientoFrameRange.Cod_movimiento = "19";
+		movimientoFrameRanges.Add (movimientoFrameRange);
+		if (reproductorNotifier != null) {
+
+			reproductorNotifier.rutinaCargada(skeletonFrame.Length, movimientoFrameRanges);
+		}
+
+		Debug.Log("Simulating " + @inputFile + " frames loaded " + skeletonFrame.Length);
+	}
+
+	public void LoadPlaybackMultipleFiles(string []inputFiles, int i, List<NuiSkeletonFrame> finalSkeletonFrame, List<MovimientoFrameRange> movimientoFrameRanges)  {
+
+		if (i < inputFiles.Length) {
+			string inputFileLoad = inputFiles[i];
+			FileStream input = new FileStream(@inputFileLoad, FileMode.Open);
+			BinaryFormatter bf = new BinaryFormatter();
+			SerialSkeletonFrame[] serialSkeleton = (SerialSkeletonFrame[])bf.Deserialize(input);
+			MovimientoFrameRange movimientoFrameRange = new MovimientoFrameRange();
+			movimientoFrameRange.InitFrame = finalSkeletonFrame.Count;
+
+			for(int ii = 0; ii < serialSkeleton.Length; ii++){
+				finalSkeletonFrame.Add(serialSkeleton[ii].deserialize());
+			}
+
+			input.Close();
+
+			movimientoFrameRange.EndFrame = movimientoFrameRange.InitFrame + serialSkeleton.Length;
+			movimientoFrameRange.Cod_movimiento = "";
+			movimientoFrameRanges.Add(movimientoFrameRange);
+
+			Debug.Log("Archivo " + inputFileLoad + " frames loaded " + serialSkeleton.Length);
+			LoadPlaybackMultipleFiles(inputFiles, i+1, finalSkeletonFrame, movimientoFrameRanges);
+
+		} else {
+
+			timer = 0;
+			curFrame = 0;
+			frameCount = 0;
+			if (SessionJuego.getRepeticionesMovimientos() > 1) {
+
+				for (int repeticiones = 1 ; repeticiones < SessionJuego.getRepeticionesMovimientos(); repeticiones++) {
+					for (int numMovimientos = 0; numMovimientos < inputFiles.Length; numMovimientos++) {
+						MovimientoFrameRange movimientoFrameRange = new MovimientoFrameRange();
+						movimientoFrameRange.InitFrame = finalSkeletonFrame.Count;
+						int initFrame = movimientoFrameRanges[numMovimientos].InitFrame;
+						int endFrame = movimientoFrameRanges[numMovimientos].EndFrame;
+						for (int iterator=initFrame; iterator < endFrame; iterator++) {
+							finalSkeletonFrame.Add(finalSkeletonFrame[iterator]);
+						}
+						movimientoFrameRange.EndFrame = movimientoFrameRange.InitFrame + movimientoFrameRanges[numMovimientos].EndFrame;
+						movimientoFrameRange.Cod_movimiento = "";
+						movimientoFrameRanges.Add(movimientoFrameRange);
+					}
+				}
+			}
+			skeletonFrame = finalSkeletonFrame.ToArray();
+			Debug.Log("Archivos cargados frames loaded " + skeletonFrame.Length);
+
+			if (reproductorNotifier != null) {
+				reproductorNotifier.rutinaCargada(skeletonFrame.Length, movimientoFrameRanges);
+			}
+		}
+	}
+
+	public int getNumFrames() {
+		return skeletonFrame.Length;
 	}
 	
 	float KinectInterface.getSensorHeight() {
@@ -103,7 +192,7 @@ public class ReproductorArchivoLector : MonoBehaviour, Kinect.KinectInterface {
 	}
 
 	public bool finalizoReproduccion() {
-		Debug.Log ("finalizoReproduccion:" + (skeletonFrame.Length > 0 && curFrame >= skeletonFrame.Length));
+		//Debug.Log ("finalizoReproduccion:" + (skeletonFrame.Length > 0 && curFrame >= skeletonFrame.Length));
 		return skeletonFrame.Length > 0 && curFrame >= skeletonFrame.Length;
 	}
 	
@@ -120,7 +209,7 @@ public class ReproductorArchivoLector : MonoBehaviour, Kinect.KinectInterface {
 
 	bool KinectInterface.pollSkeleton() {
 		frameCount++;
-		Debug.Log ("curFrame:" + curFrame + " - frameCount:" + frameCount);
+		//Debug.Log ("curFrame:" + curFrame + " - frameCount:" + frameCount);
 
 		if(frameCount >= 1){
 			frameCount = 0;
@@ -141,75 +230,87 @@ public class ReproductorArchivoLector : MonoBehaviour, Kinect.KinectInterface {
 		return skeletonFrame[curFrame];
 	}
 
-	public float getDistanceSkeletonPosIndex(NuiSkeletonFrame frame, Kinect.NuiSkeletonPositionIndex joint1,Kinect.NuiSkeletonPositionIndex joint2) {
-		Vector4 joint1Pos = (int)joint1 < frame.SkeletonData.Length ? frame.SkeletonData [(int)joint1].Position : new Vector4();
-		Vector4 joint2Pos = (int)joint2 < frame.SkeletonData.Length ? frame.SkeletonData [(int)joint2].Position : new Vector4();
+	public float getDistanceSkeletonPosIndex(NuiSkeletonFrame frame, Kinect.NuiSkeletonPositionIndex joint1,Kinect.NuiSkeletonPositionIndex joint2, int indexTracked) {
+		Vector4 joint1Pos = (int)joint1 < frame.SkeletonData[indexTracked].SkeletonPositions.Length ? frame.SkeletonData[indexTracked].SkeletonPositions [(int)joint1] : new Vector4();
+		Vector4 joint2Pos = (int)joint2 < frame.SkeletonData[indexTracked].SkeletonPositions.Length ? frame.SkeletonData[indexTracked].SkeletonPositions [(int)joint2] : new Vector4();
 		return Vector3.Distance (joint1Pos, joint2Pos);
 	}
 
-	public float getFactorConversionPosIndex(Kinect.NuiSkeletonPositionIndex joint1,Kinect.NuiSkeletonPositionIndex joint2) {
-		float distanceReproducion = this.getDistanceSkeletonPosIndex (skeletonFrame[curFrame], joint1, joint2); 
-		float distancePlayer = this.getDistanceSkeletonPosIndex (convertSkeletonFrame(kinectManager.skeletonFrame), joint1, joint2); 
+	public float getFactorConversionPosIndex(Kinect.NuiSkeletonPositionIndex joint1,Kinect.NuiSkeletonPositionIndex joint2, int indexTracked) {
+		float distanceReproducion = this.getDistanceSkeletonPosIndex (skeletonFrame[curFrame], joint1, joint2, indexTracked); 
+		float distancePlayer = this.getDistanceSkeletonPosIndex (convertSkeletonFrame(kinectManager.skeletonFrame), joint1, joint2, indexTracked); 
 
 		return distancePlayer/distanceReproducion;
 	}
 
-	public NuiSkeletonData[] convertedSkeletonFactor() {
-		NuiSkeletonData [] skeletonDataFactored = new NuiSkeletonData[(int)NuiSkeletonPositionIndex.Count];
-		skeletonFrame[curFrame].SkeletonData.CopyTo(skeletonDataFactored, 0);
+	public NuiSkeletonData convertedSkeletonFactor() {
+		NuiSkeletonData [] skeletonDataFactored = new NuiSkeletonData[skeletonFrame [curFrame].SkeletonData.Length];
+		NuiSkeletonData [] skeletonDataFile = skeletonFrame [curFrame].SkeletonData;
+		skeletonDataFile.CopyTo(skeletonDataFactored, 0);
+		NuiSkeletonData skeletonDataTracked;
+		int indexTracked = -1;
+
+		for (int i = 0; i < skeletonDataFile.Length; i++) {
+			if (skeletonDataFile[i].eTrackingState == NuiSkeletonTrackingState.SkeletonTracked) {
+				indexTracked = i;
+				break;
+			}
+		}
+		/*
 		//Moving hand left
-		changePositionOfJoint (NuiSkeletonPositionIndex.HandLeft, NuiSkeletonPositionIndex.WristLeft, ref skeletonDataFactored);
+		changePositionOfJoint (NuiSkeletonPositionIndex.HandLeft, NuiSkeletonPositionIndex.WristLeft, ref skeletonDataFactored, indexTracked);
 		//Moving wristleft
-		changePositionOfJoint (NuiSkeletonPositionIndex.WristLeft, NuiSkeletonPositionIndex.ElbowLeft, ref skeletonDataFactored);
+		changePositionOfJoint (NuiSkeletonPositionIndex.WristLeft, NuiSkeletonPositionIndex.ElbowLeft, ref skeletonDataFactored, indexTracked);
 		//Moving elboeleft
-		changePositionOfJoint (NuiSkeletonPositionIndex.ElbowLeft, NuiSkeletonPositionIndex.ShoulderLeft, ref skeletonDataFactored);
+		changePositionOfJoint (NuiSkeletonPositionIndex.ElbowLeft, NuiSkeletonPositionIndex.ShoulderLeft, ref skeletonDataFactored, indexTracked);
 		//Moving shoulderleft
-		changePositionOfJoint (NuiSkeletonPositionIndex.ShoulderLeft, NuiSkeletonPositionIndex.ShoulderCenter, ref skeletonDataFactored);
-
+		changePositionOfJoint (NuiSkeletonPositionIndex.ShoulderLeft, NuiSkeletonPositionIndex.ShoulderCenter, ref skeletonDataFactored, indexTracked);
+		
 		//Moving hand right
-		changePositionOfJoint (NuiSkeletonPositionIndex.HandRight, NuiSkeletonPositionIndex.WristRight, ref skeletonDataFactored);
+		changePositionOfJoint (NuiSkeletonPositionIndex.HandRight, NuiSkeletonPositionIndex.WristRight, ref skeletonDataFactored, indexTracked);
 		//Moving wristright
-		changePositionOfJoint (NuiSkeletonPositionIndex.WristRight, NuiSkeletonPositionIndex.ElbowRight, ref skeletonDataFactored);
+		changePositionOfJoint (NuiSkeletonPositionIndex.WristRight, NuiSkeletonPositionIndex.ElbowRight, ref skeletonDataFactored, indexTracked);
 		//Moving elbowright
-		changePositionOfJoint (NuiSkeletonPositionIndex.WristRight, NuiSkeletonPositionIndex.ShoulderRight, ref skeletonDataFactored);
+		changePositionOfJoint (NuiSkeletonPositionIndex.WristRight, NuiSkeletonPositionIndex.ShoulderRight, ref skeletonDataFactored, indexTracked);
 		//Moving shoulderright
-		changePositionOfJoint (NuiSkeletonPositionIndex.ShoulderRight, NuiSkeletonPositionIndex.ShoulderCenter, ref skeletonDataFactored);
-
+		changePositionOfJoint (NuiSkeletonPositionIndex.ShoulderRight, NuiSkeletonPositionIndex.ShoulderCenter, ref skeletonDataFactored, indexTracked);
+		
 		//Moving footleft
-		changePositionOfJoint (NuiSkeletonPositionIndex.FootLeft, NuiSkeletonPositionIndex.AnkleLeft, ref skeletonDataFactored);
+		changePositionOfJoint (NuiSkeletonPositionIndex.FootLeft, NuiSkeletonPositionIndex.AnkleLeft, ref skeletonDataFactored, indexTracked);
 		//Moving ankleleft
-		changePositionOfJoint (NuiSkeletonPositionIndex.AnkleLeft, NuiSkeletonPositionIndex.KneeLeft, ref skeletonDataFactored);
+		changePositionOfJoint (NuiSkeletonPositionIndex.AnkleLeft, NuiSkeletonPositionIndex.KneeLeft, ref skeletonDataFactored, indexTracked);
 		//Moving kneeleft
-		changePositionOfJoint (NuiSkeletonPositionIndex.KneeLeft, NuiSkeletonPositionIndex.HipLeft, ref skeletonDataFactored);
+		changePositionOfJoint (NuiSkeletonPositionIndex.KneeLeft, NuiSkeletonPositionIndex.HipLeft, ref skeletonDataFactored, indexTracked);
 		//Moving hipleft
-		changePositionOfJoint (NuiSkeletonPositionIndex.HipLeft, NuiSkeletonPositionIndex.HipCenter, ref skeletonDataFactored);
-
+		changePositionOfJoint (NuiSkeletonPositionIndex.HipLeft, NuiSkeletonPositionIndex.HipCenter, ref skeletonDataFactored, indexTracked);
+		
 		//Moving footright
-		changePositionOfJoint (NuiSkeletonPositionIndex.FootRight, NuiSkeletonPositionIndex.AnkleRight, ref skeletonDataFactored);
+		changePositionOfJoint (NuiSkeletonPositionIndex.FootRight, NuiSkeletonPositionIndex.AnkleRight, ref skeletonDataFactored, indexTracked);
 		//Moving ankleright
-		changePositionOfJoint (NuiSkeletonPositionIndex.AnkleRight, NuiSkeletonPositionIndex.KneeRight, ref skeletonDataFactored);
+		changePositionOfJoint (NuiSkeletonPositionIndex.AnkleRight, NuiSkeletonPositionIndex.KneeRight, ref skeletonDataFactored, indexTracked);
 		//Moving kneeright
-		changePositionOfJoint (NuiSkeletonPositionIndex.KneeRight, NuiSkeletonPositionIndex.HipRight, ref skeletonDataFactored);
+		changePositionOfJoint (NuiSkeletonPositionIndex.KneeRight, NuiSkeletonPositionIndex.HipRight, ref skeletonDataFactored, indexTracked);
 		//Moving hipright
-		changePositionOfJoint (NuiSkeletonPositionIndex.HipRight, NuiSkeletonPositionIndex.HipCenter, ref skeletonDataFactored);
-
+		changePositionOfJoint (NuiSkeletonPositionIndex.HipRight, NuiSkeletonPositionIndex.HipCenter, ref skeletonDataFactored, indexTracked);
+		
 		//Moving head
-		changePositionOfJoint (NuiSkeletonPositionIndex.Head, NuiSkeletonPositionIndex.ShoulderCenter, ref skeletonDataFactored);
-
+		changePositionOfJoint (NuiSkeletonPositionIndex.Head, NuiSkeletonPositionIndex.ShoulderCenter, ref skeletonDataFactored, indexTracked);
+		
 		//Moving shouldercenter
-		changePositionOfJoint (NuiSkeletonPositionIndex.ShoulderCenter, NuiSkeletonPositionIndex.Spine, ref skeletonDataFactored);
+		changePositionOfJoint (NuiSkeletonPositionIndex.ShoulderCenter, NuiSkeletonPositionIndex.Spine, ref skeletonDataFactored, indexTracked);
 		//Moving hipcenter
-		changePositionOfJoint (NuiSkeletonPositionIndex.HipCenter, NuiSkeletonPositionIndex.Spine, ref skeletonDataFactored);
-
-		return skeletonDataFactored;
+		changePositionOfJoint (NuiSkeletonPositionIndex.HipCenter, NuiSkeletonPositionIndex.Spine, ref skeletonDataFactored, indexTracked);
+		*/
+		return skeletonDataFactored[indexTracked];
 	}
 
-	private void changePositionOfJoint(Kinect.NuiSkeletonPositionIndex target, Kinect.NuiSkeletonPositionIndex relation, ref NuiSkeletonData [] skeletonDataFactored) {
+	private void changePositionOfJoint(Kinect.NuiSkeletonPositionIndex target, Kinect.NuiSkeletonPositionIndex relation, ref NuiSkeletonData[] skeletonDataFactored, int indexTracked) {
 		//Moving hand left
-		float factor = getFactorConversionPosIndex (relation, target);
+		float factor = getFactorConversionPosIndex (relation, target, indexTracked);
 		try {
-		if (curFrame < skeletonFrame.Length && ((int) target) < skeletonDataFactored.Length && ((int) relation) < skeletonFrame[curFrame].SkeletonData.Length && skeletonDataFactored [(int)target].Position != null && skeletonFrame[curFrame].SkeletonData [(int)relation].Position != null) {
-			skeletonDataFactored [(int)target].Position = factorPosition (skeletonFrame[curFrame].SkeletonData [(int)relation].Position, skeletonFrame[curFrame].SkeletonData [(int)target].Position, factor);
+			if (curFrame < skeletonFrame.Length && ((int) target) < skeletonDataFactored[indexTracked].SkeletonPositions.Length && ((int) relation) < skeletonFrame[curFrame].SkeletonData[indexTracked].SkeletonPositions.Length && skeletonDataFactored[indexTracked].SkeletonPositions [(int)target] != null && skeletonFrame[curFrame].SkeletonData[indexTracked].SkeletonPositions [(int)relation] != null) {
+				skeletonDataFactored[indexTracked].SkeletonPositions [(int)target] = factorPosition (skeletonFrame[curFrame].SkeletonData[indexTracked].SkeletonPositions [(int)relation]
+				                                                                                     , skeletonFrame[curFrame].SkeletonData[indexTracked].SkeletonPositions [(int)target], factor);
 			} 
 		} catch (Exception exp) {
 			Debug.Log("Error:" + exp);
@@ -300,4 +401,5 @@ public class ReproductorArchivoLector : MonoBehaviour, Kinect.KinectInterface {
 	short[] KinectInterface.getDepth() {
 		return null;
 	}
+
 }

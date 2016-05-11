@@ -672,6 +672,10 @@ namespace SimpleJSON
                 m_List[i].Serialize(aWriter);
             }
         }
+
+		public void reverse() {
+			m_List.Reverse ();
+		}
     } // End of JSONArray
  
     public class JSONClass : JSONNode, IEnumerable

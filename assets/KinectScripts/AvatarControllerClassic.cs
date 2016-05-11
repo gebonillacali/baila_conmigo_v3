@@ -40,6 +40,7 @@ public class AvatarControllerClassic : AvatarController
 
 	public Transform BodyRoot;
 	public GameObject OffsetNode;
+	public bool isTransparent;
 	
 
 	// If the bones to be mapped have been declared, map that bone to the model.
@@ -92,6 +93,20 @@ public class AvatarControllerClassic : AvatarController
 //		{
 //			bodyRoot = transform;
 //		}
+
+		if (isTransparent) {
+
+			Renderer[] renderers = gameObject.GetComponentsInChildren<Renderer>();
+			foreach (Renderer r in renderers)
+			{
+				Color colorTranparent = new Color(r.material.color.r, r.material.color.g, r.material.color.b, 0.3f);
+				r.material.shader = Shader.Find ("Transparent/Diffuse");
+				r.material.color = colorTranparent;
+				//r.enabled = false;
+				r.sharedMaterial.color = colorTranparent;
+			}
+		}
+
 	}
 	
 }

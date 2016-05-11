@@ -19,7 +19,7 @@ using System.Text;
 using System.Runtime.Serialization.Formatters.Binary;
 
 
-public class ReproduccionArchivoFuente : KinectWrapper
+public class ReproduccionArchivoFuente
 {
 	private static string inputFile = "";
 	private static NuiSkeletonFrame []skeletonFrames;

@@ -9,6 +9,9 @@ using System;
 
 public class MouseControl
 {
+	public static int mouseXPos;
+	public static int mouseYPos;
+
     // Import function mouse_event() from WinApi
     [DllImport("User32.dll")] 
     private static extern void mouse_event(MouseFlags dwFlags, int dx, int dy, int dwData, System.UIntPtr dwExtraInfo);
@@ -141,7 +144,15 @@ public class MouseControl
 		}
 
 		mouse_event(MouseFlags.Absolute | MouseFlags.Move, mouseX, mouseY, 0, System.UIntPtr.Zero);
+		MouseControl.mouseXPos = mouseX;
+		MouseControl.mouseYPos = mouseY;
     }
+
+	public static void MouseMoveToPoint(Vector2 position) {
+		mouse_event(MouseFlags.Absolute | MouseFlags.Move, (int)position.x, (int)position.y, 0, System.UIntPtr.Zero);
+		MouseControl.mouseXPos = (int)position.x;
+		MouseControl.mouseYPos = (int)position.y;
+	}
 
 	// find the closest matching child window to the screen size
 	private static IntPtr GetClosestWindow(IntPtr hWndMain, int scrWidth, int scrHeight)
